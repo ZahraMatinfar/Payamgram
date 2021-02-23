@@ -1,5 +1,5 @@
 from django.db import models
-from user.validators import minimum_age
+from apps.user.validators import minimum_age
 from django_extensions.db.fields import AutoSlugField
 
 
