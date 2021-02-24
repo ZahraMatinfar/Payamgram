@@ -2,44 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b41bce19-db67-43ce-b73a-9b076508ec5d" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/post/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/post/admin.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/post/apps.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/post/manager.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/post/models/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/post/models/post.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/post/templates/post/post_detail.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/post/templates/post/post_list.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/post/templatetags/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/post/templatetags/post_custom_tags.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/post/tests.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/post/urls.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/post/views.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/user/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/user/admin.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/user/apps.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/user/forms.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/user/manager.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/user/models/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/user/models/user.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/user/static/user/style.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/user/templates/user/register.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/user/templates/user/user_detail.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/user/templates/user/user_list.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/user/templatetags/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/user/templatetags/user_custom_tags.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/user/tests.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/user/urls.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/user/validators.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/user/views.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/db.sqlite3" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/manage.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/socialnetwork/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/socialnetwork/asgi.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/socialnetwork/settings.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/socialnetwork/urls.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/socialnetwork/wsgi.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,7 +19,7 @@
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../git/project" />
   </component>
   <component name="TaskManager">
     <servers />
@@ -72,5 +35,9 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="add payamgram 1399/12/6 - by Mohadese" />
+    <option name="LAST_COMMIT_MESSAGE" value="add payamgram 1399/12/6 - by Mohadese" />
   </component>
 </project>
