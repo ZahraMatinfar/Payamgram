@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class PayamgramConfig(AppConfig):
+class UserConfig(AppConfig):
     name = 'apps.user'

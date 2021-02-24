@@ -1,7 +1,6 @@
+{% load post_custom_tags %}
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -10,7 +9,8 @@
 <div>
     <ul>
        posts : <li>{{ object.caption }}</li>
-        date : <li>{{ object.published_date }}</li>
+        date : <li>{{ object.age | age }}</li>
+        <li><a href="{% url 'user_detail' object.user.slug%}">{{ object.user.username }}</a></li>
 
     </ul>
 

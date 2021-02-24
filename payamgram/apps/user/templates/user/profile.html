@@ -6,8 +6,10 @@
     <title>Title</title>
 </head>
 <body>
+<a href="{% url 'create_post' object.slug%}">پست جدید</a>
 <a href="{% url 'post_list' %}">پست ها</a>
 <a href="{% url 'user_list' %}">کاربران</a>
+{#<a href="{% url '' %}"></a>#}
 <div>
     <div> {{ object.post_set.count }} پست</div>
     <div>دنبال کننده</div>

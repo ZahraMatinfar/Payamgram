@@ -5,7 +5,7 @@ from django.utils import timezone
 from django_extensions.db.fields import AutoSlugField
 
 from apps.user.models import User
-from django.urls import reverse
+
 
 class Post(models.Model):
     title = models.CharField(max_length=50)
@@ -13,6 +13,7 @@ class Post(models.Model):
     published_date = models.DateTimeField(editable=False)
     slug = AutoSlugField(populate_from=['title'], unique=True, allow_unicode=True)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
+    user_slug = AutoSlugField(populate_from=['user'])
 
     def __str__(self):
         return f'{self.id} : {self.title} published at {self.published_date}'
@@ -25,6 +26,3 @@ class Post(models.Model):
     @property
     def age(self):
         return timezone.now() - self.published_date
-
-    def get_absolute_url(self):
-        return reverse('post_detail', args=[(self.pk)])

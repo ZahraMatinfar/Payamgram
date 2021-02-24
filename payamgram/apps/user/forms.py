@@ -1,20 +1,44 @@
+from hashlib import sha256
+
 from django import forms
 from django.core.exceptions import ValidationError
+from django.db.models import Q
+
+from apps.user.models import User
+from apps.user.validators import minimum_age
 
 
-class CustomUserCreationForm(forms.Form):
-    first_name = forms.CharField(label='first name', min_length=4, max_length=150)
-    last_name = forms.CharField(label='last name', min_length=4, max_length=150)
-    birthday = forms.CharField(label='birthday')
-    username = forms.CharField(label='Username', min_length=4, max_length=150)
-    email = forms.EmailField(label='email')
-    password1 = forms.CharField(label='Enter password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
+class RegisterForm(forms.Form):
+    first_name = forms.CharField(label='نام', max_length=100, required=False)
+    last_name = forms.CharField(label='نام خانوادگی', max_length=100, required=False)
+    email = forms.CharField(label='ایمیل', max_length=200)
+    username = forms.CharField(label='نام کاربری', max_length=100)
+    password = forms.CharField(label='گذرواژه', max_length=100)
+    birthday = forms.DateField(label='تاریخ تولد',
+                               widget=forms.TextInput(attrs={'type': 'date'}))
 
-    def clean_password2(self):
-        password1 = self.cleaned_data.get('password1')
-        password2 = self.cleaned_data.get('password2')
+    def clean_birthday(self):
+        birthday = self.cleaned_data['birthday']
+        if minimum_age(birthday):
+            return self.cleaned_data['birthday']
 
-        if password1 and password2 and password1 != password2:
-            raise ValidationError("Passwords don't match")
-        return password2
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        user = User.objects.filter(username__exact=username)
+        if user:
+            raise ValidationError('این نام کاربری قبلا ثبت شده است.')
+        else:
+            return self.cleaned_data['username']
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        user = User.objects.filter(email__exact=email)
+        if user:
+            raise ValidationError('این ایمیل قبلا ثبت شده است.')
+        else:
+            return self.cleaned_data['email']
+
+
+class LoginForm(forms.Form):
+    email = forms.CharField(label='ایمیل', max_length=200)
+    password = forms.CharField(label='گذرواژه', max_length=100)

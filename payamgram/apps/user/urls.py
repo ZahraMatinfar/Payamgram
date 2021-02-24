@@ -1,11 +1,12 @@
-from django.urls import path,re_path
-from apps.user.views import UserList,UserDetail
-from apps.user import views
-from apps.post.views import PostDetail
+from django.urls import path
+
+from apps.user.views import SignIn, Login, Profile, UserDetail, UserList
 
 urlpatterns = [
-    re_path(r'^register/$', views.register, name='register'),
+    path('', SignIn.as_view(), name='signup'),
+    path('login/', Login.as_view(), name='login'),
+    path('profile/<slug:slug>/', Profile.as_view(), name='profile'),
+    path('user_detail/<slug:slug>/', UserDetail.as_view(), name='user_detail'),
     path('users/', UserList.as_view(), name='user_list'),
-    path('users/<slug:slug>/', UserDetail.as_view(), name='user_detail'),
-    path('posts/<slug:slug>/', PostDetail.as_view(),name = 'post_detail')
-    ]
+    # path('profile/',view,name='profile'),
+]

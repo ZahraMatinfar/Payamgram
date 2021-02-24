@@ -1,25 +1,34 @@
+from hashlib import sha256
+
 from django.db import models
 
-from apps.user.manager import UserPosts
-from apps.user.validators import minimum_age
+# Create your models here.
 from django_extensions.db.fields import AutoSlugField
-from django.urls import reverse
+
+from apps.user.validators import minimum_age
 
 
 class User(models.Model):
-    first_name = models.CharField(max_length=100, blank=True)
-    last_name = models.CharField(max_length=100, blank=True)
-    email = models.EmailField(max_length=200, unique=True)
+    # GENDERS = [('M', 'Male'), ('F', 'Female')]
+    username = models.CharField(max_length=100, unique=True, primary_key=True,
+                                help_text='دوستان تان،با این نام شما را در پیام گرام پیدا می کنند.')
     password = models.CharField(max_length=100)
     slug = AutoSlugField(populate_from=['username'])
-    username = models.CharField(primary_key=True, max_length=100, unique=True)
+    email = models.EmailField(max_length=200)
     birthday = models.DateField(validators=[minimum_age])
+    first_name = models.CharField(max_length=100, blank=True)
+    last_name = models.CharField(max_length=100, blank=True)
+    login = models.BooleanField(default=False)
 
-    # image for profile
-    objects = UserPosts()
+    # gender = models.CharField(max_length=1, choices=GENDERS)
+
+    def __str__(self):
+        return self.username
+
     @property
     def full_name(self):
-        return self.first_name + ' ' + self.last_name
+        return f'{self.first_name} {self.last_name}'
 
-    def get_absolute_url(self):
-        return reverse('user_detail', args=[(self.username)])
+    def save(self, *args, **kwargs):
+        self.password = sha256(self.password.encode('utf-8')).hexdigest()
+        return super().save(*args, **kwargs)

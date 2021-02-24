@@ -4,6 +4,7 @@ from apps.user.models import User
 
 
 @admin.register(User)
-class PersonAdmin(admin.ModelAdmin):
+class UserAdmin(admin.ModelAdmin):
     list_display = ['username', 'email']
     list_display_links = ['username']
+    readonly_fields = ['login']

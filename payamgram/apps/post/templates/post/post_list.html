@@ -6,17 +6,11 @@
 </head>
 <body>
 
-{% for post in object_list %}
-    <div>
-        <a href="{{ post.get_absolute_url }}">
-            <ul>
-            <li> {{ post.title | title }} </li>
-            </ul>
-        </a>
-    </div>
-
-{% endfor %}
-
+    <ul>
+        {% for post in object_list %}
+            <li><a href="{% url 'post_detail' post.slug%}">{{ post.title | title }} </a></li>
+        {% endfor %}
+    </ul>
 
 </body>
 </html>
