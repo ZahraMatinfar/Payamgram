@@ -1,0 +1,149 @@
+/* @import 'https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.css'; */
+
+body {
+    padding: 0;
+    margin: 0;
+    background-color: #fafafa;
+    font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+
+a {
+    text-decoration: none;
+    color: #111111;
+}
+a:hover {
+    color: #999999;
+
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 975px;
+    margin: auto;
+}
+
+/* Navbar */
+.navbar {
+    background-color: white;
+    border-bottom: 1.5px solid #cccccc;
+    padding: 1.5rem;
+}
+.search-form {
+    position: relative;
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+}
+.input-wrapper {
+    position: relative;
+    display: inline-block;
+}
+.search-form #search-input {
+    padding: 0.25rem 1.7rem;
+    border: 1px solid darkgray;
+    border-radius: 9px;
+    position: relative;
+    text-align: center;
+    outline: none;
+}
+.search-form #search-icon {
+    position: absolute;
+    left: 31%;
+    bottom: 8;
+    color: darkgray;
+    width: 10px;
+}
+.navigator {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+.logo {
+    border-right: 1px solid #333333;
+    padding-right: 6px;
+    margin: 0px 9px;
+}
+.navigator > div {
+    margin: 0px 10px;
+}
+.site-name {
+    display: flex;
+    align-items: center;
+}
+/* Profile section */
+.avatar img, .stories img {
+    border-radius: 50%;
+    border: 2px solid salmon;
+    width: 150px;
+    height: 150px;
+}
+.stories img {
+    width: 100px;
+    height: 100px;
+    margin-left: 40px;
+}
+.avatar {
+    margin-right: 30px;
+    align-self: flex-start;
+}
+.blue-btn a {
+    background: #3897F0;
+    padding: 4px 15px;
+    color: #ffffff !important;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+.stats {
+    display: flex;
+    align-items: center;
+}
+.stats > div {
+    margin-top: 20px;
+    margin-right: 20px;
+}
+.user-name {
+    font-size: 28px;
+    font-weight: 300;
+    line-height: 32px;
+}
+.menu {
+    text-transform: uppercase;
+    display: flex;
+    border-top: 1px solid #eeeeee;
+    margin-top: 20px;
+    justify-content: center;
+    font-weight: 500;
+}
+.menu > div {
+    margin-right: 20px;
+    padding-top: 15px;;
+}
+.menu .active {
+    border-top: 1px solid #999999;
+    margin-top: -1px;
+}
+
+/* Album section */
+.album {
+    margin-top: 30px;
+}
+
+.album > div {
+    margin-right: 20px;
+    width: 300px;
+    height: 300px;
+    background-position: center;
+    background-size: cover;
+}
+
+.overlay {
+    /* display: none; */
+    background-color: rgba(0,0,0,0.5);
+    z-index: 2;
+}
+.album img:hover {
+    background-color: black;
+}
