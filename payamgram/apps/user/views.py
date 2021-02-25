@@ -1,12 +1,15 @@
+from hashlib import sha256
 from django.shortcuts import render, redirect
 from django.views.generic import View, DetailView, ListView
-from hashlib import sha256
+from apps.user.filters import UserFilter
 from apps.user.forms import RegisterForm, LoginForm
 from apps.user.models import User
-from django.db.models import Q
 
 
 class SignIn(View):
+    """
+    This view is used for sign in.
+    """
     def get(self, request):
         form = RegisterForm()
         return render(request, 'user/signup.html', {'form': form})
@@ -22,11 +25,19 @@ class SignIn(View):
 
 
 class Login(View):
+    """
+       This view is used for login.
+       """
     def get(self, request):
         form = LoginForm()
         return render(request, 'user/login.html', {'form': form})
 
     def post(self, request):
+        """
+        Input password after hashing with username will compared with database. If user is in database
+        User will redirect to her/his profile.
+        :return: render login page
+        """
         message = ''
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -53,3 +64,12 @@ class UserDetail(DetailView):
 
 class UserList(ListView):
     model = User
+
+
+class FindUser(View):
+    """
+    by using a custom filter ,user can search to find another users.This view is used for autocomplete search.
+    """
+    def get(self, request):
+        user_filter = UserFilter(request.GET, User.objects.all())
+        return render(request, 'user/find_user.html', {'user_filter': user_filter})

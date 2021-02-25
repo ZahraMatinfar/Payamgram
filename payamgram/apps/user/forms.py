@@ -1,26 +1,27 @@
-from hashlib import sha256
-
 from django import forms
 from django.core.exceptions import ValidationError
-from django.db.models import Q
-
 from apps.user.models import User
-from apps.user.validators import minimum_age
 
 
-class RegisterForm(forms.Form):
-    first_name = forms.CharField(label='نام', max_length=100, required=False)
-    last_name = forms.CharField(label='نام خانوادگی', max_length=100, required=False)
-    email = forms.CharField(label='ایمیل', max_length=200)
-    username = forms.CharField(label='نام کاربری', max_length=100)
-    password = forms.CharField(label='گذرواژه', max_length=100)
-    birthday = forms.DateField(label='تاریخ تولد',
-                               widget=forms.TextInput(attrs={'type': 'date'}))
+class RegisterForm(forms.ModelForm):
+    """
+    a form for sig in.
+    """
 
-    def clean_birthday(self):
-        birthday = self.cleaned_data['birthday']
-        if minimum_age(birthday):
-            return self.cleaned_data['birthday']
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'username', 'password', 'birthday']
+        widgets = {
+            'birthday': forms.TextInput(attrs={'type': 'date'}),
+        }
+        labels = {
+            'first_name': 'نام',
+            'last_name': 'نام خانوادگی',
+            'email': 'ایمیل',
+            'username': 'نام کاربری',
+            'password': 'گذرواژه',
+            'birthday': 'تاریخ تولد',
+        }
 
     def clean_username(self):
         username = self.cleaned_data['username']
@@ -40,5 +41,8 @@ class RegisterForm(forms.Form):
 
 
 class LoginForm(forms.Form):
+    """
+        a form for sig in.
+    """
     email = forms.CharField(label='ایمیل', max_length=200)
     password = forms.CharField(label='گذرواژه', max_length=100)

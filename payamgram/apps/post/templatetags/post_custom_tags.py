@@ -5,6 +5,10 @@ register = template.Library()
 
 @register.filter(name='age')
 def age_filter(age):
+    """
+    :param age: age of a post
+    :return: user friendly and text age of a post
+    """
     year = age.days // 365
     month = age.days // 30
     day = age.days

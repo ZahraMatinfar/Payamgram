@@ -19,10 +19,17 @@ class Post(models.Model):
         return f'{self.id} : {self.title} published at {self.published_date}'
 
     def save(self, *args, **kwargs):
+        """
+        overwrite saving to save exact published date of post
+        :return:
+        """
         if not self.id:
             self.published_date = timezone.now()
         return super().save(*args, **kwargs)
 
     @property
     def age(self):
+        """
+        :return: age of a post .Indicates how much time has passed since the post was sent
+        """
         return timezone.now() - self.published_date

@@ -10,6 +10,4 @@ urlpatterns = [
              path('<slug:slug>/', PostDetail.as_view(), name='post_detail'),
          ])
          ),
-
-    # path('setail/')
 ]

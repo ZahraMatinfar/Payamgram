@@ -18,8 +18,7 @@
 <div>
     <ul>
         {% for post in object.post_set.all %}
-{#            <li><a href="{% url '' %}"></a>{{ post.title }} {{ post.age | age}}</li>#}
-            <li><a href="#"></a>{{ post.title }} {{ post.age | age}}</li>
+            <li><a href="{% url 'post_detail' post.slug%}">{{ post.title }} {{ post.age | age}}</a></li>
         {% endfor %}
     </ul>
 </div>

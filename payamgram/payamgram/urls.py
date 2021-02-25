@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.views.generic import TemplateView
 
 urlpatterns = [
@@ -22,5 +22,6 @@ urlpatterns = [
     path('user/', include('apps.user.urls')),
     path('post/', include('apps.post.urls')),
     path('', TemplateView.as_view(template_name='index.html'), name='index'),
-    path('404/',TemplateView.as_view(template_name='404.html'), name='404')
+    path('404/',TemplateView.as_view(template_name='404.html'), name='404'),
+    # re_path(r'^simple-autocomplete/', include('simple_autocomplete.urls', namespace='simple_autocomplete')),
 ]

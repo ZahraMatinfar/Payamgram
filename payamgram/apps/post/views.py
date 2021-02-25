@@ -7,11 +7,17 @@ from apps.user.models import User
 
 
 class CreatePost(View):
+    """
+    view of creating post
+    """
     def get(self, request, user_slug):
         form = PostForm()
         return render(request, 'post/create_post.html', {'form': form})
 
     def post(self, request, user_slug):
+        """
+        :param user_slug: to understand who is creating this post (Management authentication)
+        """
         form = PostForm(request.POST)
         if form.is_valid():
             user = User.objects.get(username__exact=user_slug)

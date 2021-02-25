@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     # my apps
     'apps.post',
     'apps.user',
+    # 'simple_autocomplete',
 ]
 
 MIDDLEWARE = [
@@ -76,12 +77,8 @@ WSGI_APPLICATION = 'payamgram.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Payamgram',
-        'USER': 'payamgram_admin',
-        'HOST': 'localhost',
-        'PASSWORD': '1234',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR/'db.sqlite3',
     }
 }
 

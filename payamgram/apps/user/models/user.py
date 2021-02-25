@@ -9,9 +9,7 @@ from apps.user.validators import minimum_age
 
 
 class User(models.Model):
-    # GENDERS = [('M', 'Male'), ('F', 'Female')]
-    username = models.CharField(max_length=100, unique=True, primary_key=True,
-                                help_text='دوستان تان،با این نام شما را در پیام گرام پیدا می کنند.')
+    username = models.CharField(max_length=100, unique=True, primary_key=True)
     password = models.CharField(max_length=100)
     slug = AutoSlugField(populate_from=['username'])
     email = models.EmailField(max_length=200)
@@ -19,8 +17,6 @@ class User(models.Model):
     first_name = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
     login = models.BooleanField(default=False)
-
-    # gender = models.CharField(max_length=1, choices=GENDERS)
 
     def __str__(self):
         return self.username
