@@ -87,6 +87,6 @@ def autocompletemodel(request):
             results.append(r.FIELD)
         data = json.dumps(results)
     else:
-        data = 'fail !'
+        data = 'fail '
     mimetype = 'application/json'
     return HttpResponse(data, mimetype)
