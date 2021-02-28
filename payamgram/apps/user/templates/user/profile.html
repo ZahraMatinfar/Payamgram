@@ -12,8 +12,8 @@
 {#<a href="{% url '' %}"></a>#}
 <div>
     <div> {{ object.post_set.count }} پست</div>
-    <div>دنبال کننده</div>
-    <div>دنبال شونده</div>
+    <div>{{ object.followers.count }}دنبال کننده</div>
+    <div>{{object.followers.count }}دنبال شونده</div>
 </div>
 <div>
     <ul>

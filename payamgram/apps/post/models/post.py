@@ -10,22 +10,15 @@ from apps.user.models import User
 class Post(models.Model):
     title = models.CharField(max_length=50)
     caption = models.TextField()
-    published_date = models.DateTimeField(editable=False)
+    published_date = models.DateTimeField(editable=False, auto_now_add=True)
     slug = AutoSlugField(populate_from=['title'], unique=True, allow_unicode=True)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
+    # Without auth , we need to find out who is creating a post . This field help us.
     user_slug = AutoSlugField(populate_from=['user'])
+    likes = models.ManyToManyField(User, related_name='likes', default=None)
 
     def __str__(self):
         return f'{self.id} : {self.title} published at {self.published_date}'
-
-    def save(self, *args, **kwargs):
-        """
-        overwrite saving to save exact published date of post
-        :return:
-        """
-        if not self.id:
-            self.published_date = timezone.now()
-        return super().save(*args, **kwargs)
 
     @property
     def age(self):

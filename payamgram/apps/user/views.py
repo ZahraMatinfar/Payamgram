@@ -54,11 +54,17 @@ class Login(View):
 
 
 class Profile(DetailView):
+    """
+    personal profile view
+    """
     model = User
     template_name = 'user/profile.html'
 
 
 class UserDetail(DetailView):
+    """
+    other user profile view
+    """
     model = User
 
 
@@ -73,3 +79,7 @@ class FindUser(View):
     def get(self, request):
         user_filter = UserFilter(request.GET, User.objects.all())
         return render(request, 'user/find_user.html', {'user_filter': user_filter})
+
+
+class LogOut(View):
+    pass

@@ -10,7 +10,14 @@
     <li>عنوان :{{ object.title }} </li>
     <li>متن:{{ object.caption }}  </li>
     <li>{{ object.age | age }}</li>
+    <li>{{ object.likes.count }}  نفر پسندیدند: {% for user in object.likes.all %}<span>{{ user.username }}&nbsp; &nbsp;</span>{% endfor %}</li>
     <li><a href="{% url 'user_detail' object.user.slug %}">{{ object.user.username }}</a></li>
+    <li>{{ object.comment_set.count }}  کامنت:
+    {% for comment in object.comment_set.all %}
+        <p> {{ comment.user.username }} می گه  {{ comment.context }}</p>
+        {% endfor %}
+    </li>
+
 </ul>
 
 </body>
