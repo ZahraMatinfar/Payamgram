@@ -6,6 +6,8 @@ from django.db import models
 
 class Profile(models.Model):
     GENDERS = [('M', 'Male'), ('F', 'Female')]
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
     user = models.OneToOneField(User, on_delete=models.PROTECT, related_name='profile', primary_key=True)
     bio = models.TextField(blank=True)
     gender = models.CharField('gender', choices=GENDERS, max_length=1, blank=True)
