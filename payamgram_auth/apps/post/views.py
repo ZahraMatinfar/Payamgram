@@ -20,7 +20,7 @@ class CreatePost(LoginRequiredMixin, View):
             validated_data = form.cleaned_data
             post = Post(**validated_data, user=request.user)
             post.save()
-            return redirect('post_list')
+            return redirect('profile', request.user.slug)
         return render(request, 'post/create_post.html', {'form': form})
 
 
@@ -51,7 +51,11 @@ class PostDetail(View):
     def post(self, request, slug):
         form = CommentForm(request.POST)
         like = request.POST.get('like')
+        delete = request.POST.get('delete')
         post_obj = Post.objects.get(slug=slug)
+        if delete is not None:
+            post_obj.delete()
+            return redirect('profile', request.user.slug)
         if form.is_valid():
             if form.cleaned_data['context']:
                 comment = Comment.objects.create(user=request.user, post=post_obj, context=form.cleaned_data['context'])

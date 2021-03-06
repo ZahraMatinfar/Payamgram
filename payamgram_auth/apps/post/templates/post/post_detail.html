@@ -34,18 +34,13 @@
     {% csrf_token %}
     <input type="submit" value="like" name="like">
 </form>
-{#<div class="card text-center">#}
-{#  <div class="card-header">#}
-{#    <a href="{% url 'user_detail' object.user.slug %}" class="link-dark">{{ object.user.username }}</a>#}
-{#  </div>#}
-{#  <div class="card-body">#}
-{#    <h5 class="card-title">{{ object.title }}</h5>#}
-{#    <p class="card-text">{{ object.caption }}</p>#}
-{#    <a href="#" class="btn btn-primary">Go somewhere</a>#}
-{#  </div>#}
-{#  <div class="card-footer text-muted">#}
-{#      {{ object.age |age}}#}
-{#  </div>#}
-{#</div>#}
+{% if user.is_authenticated%}
+    {% if user.username == object.user.username %}
+<form method="post">
+    {% csrf_token %}
+    <input type="submit" value="delete" name="delete">
+</form>
+        {% endif %}
+{% endif %}
 </body>
 </html>
