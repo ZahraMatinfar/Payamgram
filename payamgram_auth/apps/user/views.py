@@ -109,3 +109,33 @@ class FindUser(View):
         user_filter = UserFilter(request.GET, User.objects.all())
         # user = request.user
         return render(request, 'user/find_user.html', {'user_filter': user_filter})
+
+
+class NewUserProfileView(FormView):
+    template_name = "user/user_profile.html"
+    form_class = UserProfileForm
+
+    def form_valid(self, form):
+        form.save(self.request.user)
+        return super(NewUserProfileView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse('profile')
+
+
+class EditUserProfileView(UpdateView):
+    model = Profile
+    form_class = UserProfileForm
+    template_name = "user/user_profile.html"
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(self.model, pk=self.request.user.id)
+
+    def get(self, request, *args, **kwargs):
+        self.referer = request.META.get("HTTP_REFERER", "")
+        request.session["login_referer"] = self.referer
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.referer = request.session.get("login_referer", "")
+        return super().post(request, *args, **kwargs)

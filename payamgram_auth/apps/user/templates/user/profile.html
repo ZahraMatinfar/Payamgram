@@ -9,6 +9,8 @@
 {% if user.is_authenticated %}
     {% if login_user.username == profile_user.username%}
         <a href="{% url 'create_post' %}">پست جدید</a>
+        <a href="{% url 'new-user-profile' %}">ویرایش</a>
+        <a href="{% url 'edit-user-profile' user.slug %}">  پروفایل ویرایش</a>
         {% else %}
         <form  method="post">{% csrf_token %} <input type="submit" name="follow" value="follow"></form>
         {% endif %}
