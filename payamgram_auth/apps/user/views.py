@@ -2,15 +2,20 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.views.generic import View, DetailView, CreateView
 
-from apps.user.filters import UserFilter
-from apps.user.forms import RegisterForm, LoginForm
-
-from apps.user.models import Profile
-from apps.user.models import UserFollowing
-
+from django.views.generic import FormView
+from django.views.generic import UpdateView
+from .filters import UserFilter
+from .forms import RegisterForm, LoginForm, UserProfileForm
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+from django.shortcuts import render, redirect
+from .models import Profile
+from .models import UserFollowing
 
 class Singing(View):
     def get(self, request):
@@ -111,18 +116,6 @@ class FindUser(View):
         return render(request, 'user/find_user.html', {'user_filter': user_filter})
 
 
-class NewUserProfileView(FormView):
-    template_name = "user/user_profile.html"
-    form_class = UserProfileForm
-
-    def form_valid(self, form):
-        form.save(self.request.user)
-        return super(NewUserProfileView, self).form_valid(form)
-
-    def get_success_url(self):
-        return reverse('profile')
-
-
 class EditUserProfileView(UpdateView):
     model = Profile
     form_class = UserProfileForm
@@ -138,4 +131,27 @@ class EditUserProfileView(UpdateView):
 
     def post(self, request, *args, **kwargs):
         self.referer = request.session.get("login_referer", "")
+        # self.success_url = request.session['login_referer']
         return super().post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('profile', kwargs={
+            'slug': self.object.user.slug,
+        })
+
+
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('profile',request.user.slug)
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'user/change_password.html', {
+        'form': form
+    })
