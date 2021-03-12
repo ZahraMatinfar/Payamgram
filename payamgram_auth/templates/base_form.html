@@ -6,7 +6,7 @@
 </head>
 <body>
 <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
-<form action="" method="post" style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
+<form action="" method="post" style="display: flex;flex-direction: column;justify-content: center;align-items: center;" enctype="multipart/form-data">
 {% csrf_token %}
     <table>
         <tr>{% block message %}{% endblock %}</tr>

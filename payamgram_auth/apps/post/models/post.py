@@ -10,10 +10,9 @@ class Post(models.Model):
     caption = models.TextField()
     published_date = models.DateTimeField(editable=False, auto_now_add=True)
     slug = AutoSlugField(populate_from=['title'], unique=True, allow_unicode=True)
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
-    likes = models.ManyToManyField(User, related_name='likes', default=None)
-
-    # likes = models.ForeignKey(User, related_name='likes', on_delete=models.PROTECT, blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    likes = models.ManyToManyField(User, related_name='likes', default=None, blank=True)
+    image = models.ImageField(upload_to='posts/', blank=True)
 
     def __str__(self):
         return f'{self.id} : {self.title} published at {self.published_date}'
@@ -24,6 +23,12 @@ class Post(models.Model):
         :return: age of a post .Indicates how much time has passed since the post was sent
         """
         return timezone.now() - self.published_date
+
+    @property
+    def user_post(self):
+        return f'{self.user.username}'
+
+    # image = models.ImageField(upload_to='posts/%s/' % user_post, blank=True)
 
     class Meta:
         # ordering = ['-published_date']

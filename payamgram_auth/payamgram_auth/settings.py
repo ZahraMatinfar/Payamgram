@@ -123,6 +123,12 @@ LOGIN_URL = '/user/accounts/login/'
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, '../apps/post/static')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, '../apps/post/static/css')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'apps/post/static')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static/css'),
+                    os.path.join(BASE_DIR, 'static/js'),
+                    ]
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# AUTH_USER_MODEL = 'user.User'

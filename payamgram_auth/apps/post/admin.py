@@ -9,6 +9,7 @@ class PostAdmin(admin.ModelAdmin):
     list_display = ['id', 'title', 'slug', 'user']
     readonly_fields = ['published_date', 'slug']
     list_display_links = ['id', 'title']
+    search_fields = ['image']
 
 
 @admin.register(Comment)

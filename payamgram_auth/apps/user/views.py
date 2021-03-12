@@ -1,80 +1,68 @@
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from django.views.generic import View, DetailView, CreateView
-
-from django.views.generic import FormView
-from django.views.generic import UpdateView
-from .filters import UserFilter
-from .forms import RegisterForm, LoginForm, UserProfileForm
-from django.contrib import messages
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.forms import PasswordChangeForm
-from django.shortcuts import render, redirect
-from .models import Profile
-from .models import UserFollowing
-
-class Singing(View):
-    def get(self, request):
-        form = RegisterForm()
-        return render(request, 'user/signing.html', {'form': form})
-
-    def post(self, request):
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            validated_data = form.cleaned_data
-            user = User.objects.create_user(**validated_data)
-            user.save()
-            Profile.objects.create(user=user).save()
-            return redirect('login')
-        return render(request, 'user/signing.html', {'form': form})
+from django.views.generic import View, CreateView, UpdateView
+from apps.user.filters import UserFilter
+from apps.user.forms import RegisterForm, LoginForm, UserProfileForm
+from apps.user.models import Profile
+from apps.user.models import UserFollowing
 
 
-# class Singing(CreateView):
-#     model = User
-#     form_class = RegisterForm
-#     template_name = 'user/signing.html'
-#     success_url = redirect('login')
-#
-#     def form_valid(self, form):
-#         validated_data = form.cleaned_data
-#         user = User.objects.create_user(**validated_data)
-#         user.save()
-#         return super().form_valid(form)
+class Singing(CreateView):
+    form_class = RegisterForm
+    template_name = 'user/signing.html'
+
+    def form_valid(self, form):
+        super().form_valid(form)
+        Profile.objects.create(user=self.object)
+        login(self.request, self.object)
+        return redirect('index')
+
+    def get_success_url(self):
+        return reverse('index')
+
 
 class Login(View):
+
     def get(self, request):
         form = LoginForm()
         return render(request, 'user/login.html', {'form': form})
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         form = LoginForm(request.POST)
         next = request.GET.get('next')
         message = ''
         if form.is_valid():
-            # email = form.cleaned_data['email']
-            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            # username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                if user.is_active:
-                    login(request, user)
-                    # message = 'Login was successful'
-                    if next:
-                        return redirect(next)
-                    else:
-                        return redirect('index')
-                else:
-                    message = 'User is deactivate'
+            try:
+                user_obj = User.objects.get(email__exact=email)
+            except ObjectDoesNotExist:
+                message = 'email or password is invalid'
             else:
-                message = 'username or password is invalid'
+                user = authenticate(username=user_obj.username, password=password)
+                if user:
+                    if user.is_active:
+                        login(request, user)
+                        if next:
+                            return redirect(next)
+                        else:
+                            return redirect('index')
+                    else:
+                        message = 'User is deactivate'
+                else:
+                    message = 'email or password is invalid'
         return render(request, 'user/login.html', {'form': form, 'message': message})
 
 
-class Logout(View):
+class Logout(LoginRequiredMixin, View):
     def get(self, request):
         logout(request)
         return redirect('index')
@@ -91,18 +79,25 @@ class ProfileView(LoginRequiredMixin, View):
         return render(request, 'user/profile.html', {'profile_user': profile_user, 'login_user': login_user})
 
     def post(self, request, slug):
+
         profile_user = User.objects.get(slug=slug)
         login_user = request.user
+        # print('...',profile_user.target.requests.all())
         follow = request.POST.get('follow')
-        if follow is not None:
+        if follow:
             try:
                 following = UserFollowing.objects.get(user=login_user, following_user=profile_user)
             except ObjectDoesNotExist:
-                UserFollowing.objects.create(user=login_user, following_user=profile_user).save()
+                if login_user in profile_user.target.requests.all():
+                    profile_user.target.requests.remove(login_user)
+                else:
+                    profile_user.target.requests.add(login_user)
             else:
                 following.delete()
+
             return redirect('profile', profile_user.slug)
         return render(request, 'user/profile.html', {'profile_user': profile_user, 'login_user': login_user})
+        # return redirect('profile', profile_user.slug)
 
 
 class FindUser(View):
@@ -114,6 +109,23 @@ class FindUser(View):
         user_filter = UserFilter(request.GET, User.objects.all())
         # user = request.user
         return render(request, 'user/find_user.html', {'user_filter': user_filter})
+
+
+class ConfirmRequestView(View):
+    def get(self, request, slug):
+        # ProfileView.follow_button = 'unfollow'
+        user = User.objects.get(slug=slug)
+        request.user.target.requests.remove(user)
+        UserFollowing.objects.create(user=user, following_user=request.user)
+        return redirect('profile', request.user.slug)
+
+
+class DeleteRequestView(View):
+    def get(self, request, slug):
+        # ProfileView.follow_button = 'follow'
+        user = User.objects.get(slug=slug)
+        request.user.target.requests.remove(user)
+        return redirect('profile', request.user.slug)
 
 
 class EditUserProfileView(UpdateView):
@@ -131,7 +143,6 @@ class EditUserProfileView(UpdateView):
 
     def post(self, request, *args, **kwargs):
         self.referer = request.session.get("login_referer", "")
-        # self.success_url = request.session['login_referer']
         return super().post(request, *args, **kwargs)
 
     def get_success_url(self):
@@ -147,7 +158,7 @@ def change_password(request):
             user = form.save()
             update_session_auth_hash(request, user)
             messages.success(request, 'Your password was successfully updated!')
-            return redirect('profile',request.user.slug)
+            return redirect('profile', request.user.slug)
         else:
             messages.error(request, 'Please correct the error below.')
     else:

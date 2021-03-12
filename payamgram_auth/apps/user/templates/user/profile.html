@@ -1,3 +1,4 @@
+{#{% extends 'base_index.html' %}#}
 {% load post_custom_tags %}
 <!DOCTYPE html>
 <html lang="en">
@@ -6,30 +7,85 @@
     <title>Title</title>
 </head>
 <body>
+{% include 'header.html' %}
+
 {% if user.is_authenticated %}
-    {% if login_user.username == profile_user.username%}
+    {% if login_user.username == profile_user.username %}
+
+        <aside>
+            <h2>your requests:</h2>
+            <ul>
+                {% for request in login_user.target.requests.all %}
+                    <li>
+                        {{ request.username }}
+                        <a href="{% url 'confirm_request'  request.slug %}">
+                            <button>Confirm</button>
+                        </a>
+                        <a href="{% url 'delete_request'  request.slug %}">
+                            <button>Delete</button>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </aside>
         <a href="{% url 'create_post' %}">پست جدید</a>
-        <a href="{% url 'edit-user-profile' login_user.slug %}">  پروفایل ویرایش</a><br>
-        <a href="{% url 'change_password' %}"> ------- عوض کردن رمز------</a><br>
-        {% else %}
-        <form  method="post">{% csrf_token %} <input type="submit" name="follow" value="follow"></form>
-        {% endif %}
+        <a href="{% url 'edit-user-profile' login_user.slug%}">ویرایش پروفایل</a>
+        <a href="{% url 'change_password'%}">change password</a>
+    {% else %}
+        {{ follow_button }}
+        <form method="post">
+            {% csrf_token %}
+            <input type="submit" name="follow"
+                {% for users in profile_user.followings.all %}
+                    {% if login_user == users.user %}
+                                                    value="unfollow"
+                    {% endif %}
+                {% endfor %}
+                {% if login_user in profile_user.target.requests.all %}
+                                                    value="requested"
+                {% else %}
+                                                    value="follow"
+                {% endif %}
+            >
+        </form>
+    {% endif %}
 {% endif %}
 <a href="{% url 'post_list' %}">پست ها</a>
 <a href="{% url 'user_list' %}">کاربران</a>
 
 <div>
     <div> {{ profile_user.post_set.count }} پست</div>
-    <div>{{ profile_user.followings.count }} followers : {% for users in profile_user.followings.all %}<a href="{% url 'profile' users.user.slug%}"><span>{{ users.user.username }}</span></a>&nbsp; &nbsp;{% endfor %}</div>
-    <div>{{profile_user.follower.count }}followings : {% for users in profile_user.follower.all %}<a href="{% url 'profile' users.following_user.slug%}"><span>{{ users.following_user.username }}</span></a>&nbsp; &nbsp;{% endfor %}</div>
+    <div>{{ profile_user.followings.count }} followers : {% for users in profile_user.followings.all %}
+        <a href="{% url 'profile' users.user.slug %}"><span>{{ users.user.username }}</span></a>&nbsp;
+        &nbsp;{% endfor %}</div>
+    <div>{{ profile_user.follower.count }}followings : {% for users in profile_user.follower.all %}
+        <a href="{% url 'profile' users.following_user.slug %}"><span>{{ users.following_user.username }}</span></a>
+        &nbsp; &nbsp;{% endfor %}</div>
 </div>
 {{ profile_user.username }}
+{% if profile_user.target.image %}
+    <img src="{{ profile_user.target.image.url }}" style="height: 50px;width: 50px;border-radius: 20px;" alt="">
+    {% else %}
+    no profile image
+{% endif %}
 <div>
     <ul>
         {% for post in profile_user.post_set.all %}
-            <li><a href="{% url 'post_detail' post.slug%}">{{ post.title }} {{ post.age | age}}</a></li>
+            <li><a href="{% url 'post_detail' post.slug %}">{{ post.title }} {{ post.age | age }}</a></li>
         {% endfor %}
     </ul>
 </div>
+
+{#                {% for users in profile_user.followings.all %}#}
+{#                    {% if login_user in profile_user.followings.all. %}#}
+{#                                 <div>#}
+{#    <ul>#}
+{#        {% for post in profile_user.post_set.all %}#}
+{#            <li><a href="{% url 'post_detail' post.slug %}">{{ post.title }} {{ post.age | age }}</a></li>#}
+{#        {% endfor %}#}
+{#    </ul>#}
+{#</div>#}
+{#                    {% endif %}#}
+{#                {% endfor %}#}
 </body>
 </html>

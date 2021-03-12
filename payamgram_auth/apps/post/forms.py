@@ -9,7 +9,7 @@ class PostForm(forms.ModelForm):
     """
     class Meta:
         model = Post
-        fields = ['title', 'caption']
+        fields = ['title', 'caption', 'image']
         labels = {
             'title': 'عنوان',
             'caption': 'متن',
@@ -23,7 +23,16 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['context']
-        # labels = {
-        #     'title': 'عنوان',
-        #     'caption': 'متن',
-        # }
+
+
+class PostUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ('title', 'caption', 'image')
+
+    def save(self, user=None):
+        post = super().save(commit=False)
+        if user:
+            post.user = user
+        post.save()
+        return post
