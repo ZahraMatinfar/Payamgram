@@ -3,15 +3,22 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import User
+from apps.user.models import User
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import EmailMessage
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils.encoding import force_bytes, force_text
 from django.views.generic import View, CreateView, UpdateView
 from apps.user.filters import UserFilter
 from apps.user.forms import RegisterForm, LoginForm, UserProfileForm
 from apps.user.models import Profile
 from apps.user.models import UserFollowing
+from apps.user.tokens import account_activation_token
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
 
 class Singing(CreateView):
@@ -19,10 +26,26 @@ class Singing(CreateView):
     template_name = 'user/signing.html'
 
     def form_valid(self, form):
-        super().form_valid(form)
+        self.object = form.save(commit=False)
+        self.object.is_active = False
+        self.object.save()
+        current_site = get_current_site(self.request)
+        mail_subject = 'Activate your account.'
+        message = render_to_string('user/acc_active_email.html', {
+            'user': self.object,
+            'domain': current_site.domain,
+            'uid': urlsafe_base64_encode(force_bytes(self.object.pk)).encode().decode(),
+            'token': account_activation_token.make_token(self.object),
+        })
+        to_email = form.cleaned_data.get('email')
+        email = EmailMessage(
+            mail_subject, message, to=[to_email]
+        )
+        email.send()
+        # super().form_valid(form)
         Profile.objects.create(user=self.object)
-        login(self.request, self.object)
-        return redirect('index')
+        # login(self.request, self.object)
+        return HttpResponse('Please confirm your email address to complete the registration')
 
     def get_success_url(self):
         return reverse('index')
@@ -42,6 +65,18 @@ class Login(View):
             email = form.cleaned_data['email']
             # username = form.cleaned_data['username']
             password = form.cleaned_data['password']
+            # user = authenticate(username=email, password=password)
+            # if user:
+            #     if user.is_active:
+            #         login(request, user)
+            #         if next:
+            #             return redirect(next)
+            #         else:
+            #             return redirect('index')
+            #     else:
+            #         message = 'User is deactivate'
+            # else:
+            #     message = 'email or password is invalid'
             try:
                 user_obj = User.objects.get(email__exact=email)
             except ObjectDoesNotExist:
@@ -97,7 +132,6 @@ class ProfileView(LoginRequiredMixin, View):
 
             return redirect('profile', profile_user.slug)
         return render(request, 'user/profile.html', {'profile_user': profile_user, 'login_user': login_user})
-        # return redirect('profile', profile_user.slug)
 
 
 class FindUser(View):
@@ -107,13 +141,11 @@ class FindUser(View):
 
     def get(self, request):
         user_filter = UserFilter(request.GET, User.objects.all())
-        # user = request.user
         return render(request, 'user/find_user.html', {'user_filter': user_filter})
 
 
 class ConfirmRequestView(View):
     def get(self, request, slug):
-        # ProfileView.follow_button = 'unfollow'
         user = User.objects.get(slug=slug)
         request.user.target.requests.remove(user)
         UserFollowing.objects.create(user=user, following_user=request.user)
@@ -122,7 +154,6 @@ class ConfirmRequestView(View):
 
 class DeleteRequestView(View):
     def get(self, request, slug):
-        # ProfileView.follow_button = 'follow'
         user = User.objects.get(slug=slug)
         request.user.target.requests.remove(user)
         return redirect('profile', request.user.slug)
@@ -166,3 +197,21 @@ def change_password(request):
     return render(request, 'user/change_password.html', {
         'form': form
     })
+
+
+class ActivateView(View):
+    def get(self, request, uidb64, token):
+
+        try:
+            uid = force_text(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+        except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
+        if user is not None and account_activation_token.check_token(user, token):
+            user.is_active = True
+            user.save()
+            login(request, user)
+            return redirect('login')
+            # return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+        else:
+            return HttpResponse('Activation link is invalid!')

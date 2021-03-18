@@ -1,7 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import View, ListView, CreateView, UpdateView
+
 from apps.post.forms import PostForm, CommentForm, PostUpdateForm
 from apps.post.models import Post, Comment
 
@@ -36,29 +37,14 @@ class PostDetail(View):
 
     def post(self, request, slug):
         form = CommentForm(request.POST)
-        like = request.POST.get('like')
-        delete = request.POST.get('delete')
         delete_comment = request.POST.get('delete_comment')
         post_obj = Post.objects.get(slug=slug)
-        print('....',delete)
-        if delete:
-            post_obj.delete()
-            return redirect('profile', request.user.slug)
 
         if form.is_valid():
             if form.cleaned_data['context']:
-                comment = Comment.objects.create(user=request.user, post=post_obj, context=form.cleaned_data['context'])
-                comment.save()
-        if like:
-            likes = post_obj.likes.all()
-            if request.user in likes:
-                post_obj.likes.remove(request.user)
-            else:
-                post_obj.likes.add(request.user)
-            post_obj.save()
+                Comment.objects.create(user=request.user, post=post_obj, context=form.cleaned_data['context'])
 
         return redirect('post_detail', slug)
-        # return render(request, 'post/post_detail.html', {'form': form, 'object': post_obj})
 
 
 class DeleteComment(View):
@@ -73,6 +59,7 @@ class DeleteComment(View):
 class EditPost(LoginRequiredMixin, UpdateView):
     model = Post
     template_name = 'post/create_post.html'
+    # form_class = PostUpdateForm
     form_class = PostUpdateForm
 
     def form_valid(self, form):
@@ -89,3 +76,25 @@ class EditPost(LoginRequiredMixin, UpdateView):
         return reverse('post_detail', kwargs={
             'slug': self.object.slug,
         })
+
+
+class DeletePost(View):
+
+    @staticmethod
+    def get(request, slug):
+        post = Post.objects.get(slug=slug)
+        user_slug = post.user.slug
+        post.delete()
+        return redirect('profile', user_slug)
+
+
+class LikePost(View):
+    def get(self, request, slug):
+        post_obj = Post.objects.get(slug=slug)
+        likes = post_obj.likes.all()
+        if request.user in likes:
+            post_obj.likes.remove(request.user)
+        else:
+            post_obj.likes.add(request.user)
+        post_obj.save()
+        return redirect('post_detail', slug)

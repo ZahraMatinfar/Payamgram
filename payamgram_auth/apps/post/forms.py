@@ -7,22 +7,23 @@ class PostForm(forms.ModelForm):
     """
     a form for creating post
     """
+
     class Meta:
         model = Post
         fields = ['title', 'caption', 'image']
-        labels = {
-            'title': 'عنوان',
-            'caption': 'متن',
-        }
 
 
 class CommentForm(forms.ModelForm):
     """
     a form for creating post
     """
+
     class Meta:
         model = Comment
         fields = ['context']
+        widgets = {
+            'context': forms.TextInput(attrs={'placeholder': 'Leave a comment'})
+        }
 
 
 class PostUpdateForm(forms.ModelForm):

@@ -1,19 +1,88 @@
-<header class=" header">
-    <ul class="flex list-style menu-list">
-        <li><a href="{% url 'index' %}" class="link link-color">صفحه ی اصلی </a></li>
-        {% if user.is_authenticated %}
-            <li><a href="{% url 'logout' %}" class="link link-color">خروج</a></li>
-            <li><a href="{% url 'post_list' %}" class="link link-color"> پست</a></li>
-            <li><a href="{% url 'profile' user.slug%}" class="link link-color"> پروفایل</a></li>
-            {% if user.is_staff %}
-                <li><a href="{% url 'admin:index' %}" class="link link-color">ادمین</a></li>
-                {% endif %}
-        {% else %}
-            <li><a href="{% url 'login' %}" class="link link-color">ورود</a></li>
-            <li><a href="{% url 'signing' %}" class="link link-color">ثبت نام</a></li>
-        {% endif %}
-        {#        <li><a href="{% url 'login' %}" class="link link-color">ورود</a></li>#}
-        {#        <li><a href="{% url 'signing' %}" class="link link-color">ثبت نام</a></li>#}
-        <li><a href="#" class="link link-color">درباره ی ما</a></li>
-    </ul>
-</header>
+{% load static %}
+<nav class="navbar navbar-expand-xl navbar-light bg-light fixed-top justify-content-center">
+    {#    <a href="{% url 'index' %}" class="navbar-brand"><i class="fa fa-cube"></i><b>Payam</b>gram</a>#}
+    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbarCollapse" class="collapse navbar-collapse nav-justify-content">
+        <a href="{% url 'index' %}" class="navbar-brand"><i class="fa fa-cube"></i><b>Payam</b>gram</a>
+        <div class="navbar-nav">
+            <a href="{% url 'index' %}" class="nav-item nav-link active">Home</a>
+            <a href="#" class="nav-item nav-link">About</a>
+            <a href="#" class="nav-item nav-link">Blog</a>
+            <a href="#" class="nav-item nav-link">Contact</a>
+            {% if not user.is_authenticated %}
+                <a href="{% url 'signing' %}" class="nav-item nav-link">Sign In</a>
+                <a href="{% url 'login' %}" class="nav-item nav-link">Login</a>
+                </div>
+
+            {% else %}
+
+                <form class="navbar-form form-inline">
+                    <div class="input-group search-box">
+                        <input type="text" id="search" class="form-control" placeholder="Search by Name">
+                        <span class="input-group-addon"><i class="material-icons">&#xE8B6;</i></span>
+                    </div>
+                </form>
+
+                <div class="navbar-nav auth-user">
+                    {#                    <a href="#requestModal" class="nav-item nav-link notifications"><i class="fa fa-bell-o"></i>#}
+                    {#                        <span class="badge">{{ user.target.requests.count }}</span>#}
+                    {#                    </a>#}
+
+                    <div class="nav-item dropdown">
+                        <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle user-action">
+                            <i class="fa fa-bell-o"></i>
+                            <span class="badge">{{ user.target.requests.count }}</span> </a>
+                        <div class="dropdown-menu">
+                            {% for request in user.target.requests.all %}
+                                <div class="flex">
+                                    <a href="{% url 'profile' request.slug %}" class="dropdown-item  flex-row">
+                                        <img
+                                                {% if request.target.image %}
+                                                    src="{{ request.target.image.url }}"
+                                                {% else %}
+                                                    src="{% static 'images/profile.svg' %}"
+                                                {% endif %}
+                                                    class="avatar-request rounded-circle" style="">
+                                        <span>{{ request.username }}</span> <b class="caret"></b>
+                                        <a href="{% url 'confirm_request'  request.slug %}">
+                                            <button class="btn btn-primary">Confirm</button>
+                                        </a>
+                                        <a href="{% url 'delete_request'  request.slug %}">
+                                            <button class=" btn btn-primary">Delete</button>
+                                        </a>
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="nav-item dropdown">
+                        <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle user-action">
+                            <img
+                                    {% if user.target.image %}
+                                        src="{{ user.target.image.url }}"
+                                    {% else %}
+                                        src="{% static 'images/profile.svg' %}"
+                                    {% endif %}
+                                        class="avatar" alt="Avatar">
+                            {{ user.username }} <b class="caret"></b></a>
+                        <div class="dropdown-menu">
+                            <a href="{% url 'profile' user.slug %}" class="dropdown-item"><i class="fa fa-user-o"></i>
+                                Profile</a>
+                            <a href="{% url 'profile' user.slug %}" class="dropdown-item"><i class="fa fa-sliders"></i>Settings</a>
+                            <div class="dropdown-divider"></div>
+                            {% if user.is_staff %}
+                                <a href="{% url 'admin:index' %}" class="dropdown-item"><i class="fa fa-user-o"></i>Admin
+                                    Pannel</a>
+                            {% endif %}
+                            <a href="#myModal" class="dropdown-item" data-toggle="modal"><i class="material-icons">&#xE8AC;</i>Logout</a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+    </div>
+</nav>
+
+{% include 'modal.html' with message='Do you really want to logout?' confirm_button='Logout' confirm_link='logout' %}

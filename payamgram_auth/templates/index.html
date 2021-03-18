@@ -1,7 +1,14 @@
 {% extends 'base_index.html' %}
-{% load user_custom_tag%}
-{% block title %} پیام گرام  {% endblock %}
-{% block main %}
-    hi {{ user.username }}
-   {% followings_posts user %}
+{% load static %}
+{% load user_custom_tag %}
+{% block title %} Payamgram  {% endblock %}
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
 {% endblock %}
+{% block main %}
+    {% if user.is_authenticated %}
+        <a href="{% url 'find_user' %}"  style="position: relative;top: 1em;">Find other users</a>
+    {% followings_posts user %}
+    {% endif %}
+{% endblock %}
+<!DOCTYPE html>

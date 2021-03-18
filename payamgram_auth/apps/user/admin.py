@@ -1,9 +1,15 @@
 from django.contrib import admin
 # from apps.user.models import UserFollowing, Profile, Request
-from apps.user.models import UserFollowing, Profile
+from apps.user.models import UserFollowing, Profile, User
 
 
 # from apps.user.models import  Profile
+
+
+@admin.register(User)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ['email', 'username']
+    list_display_links = ['email']
 
 
 @admin.register(Profile)

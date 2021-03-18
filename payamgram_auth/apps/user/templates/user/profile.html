@@ -1,91 +1,198 @@
-{#{% extends 'base_index.html' %}#}
+{% extends 'base_index.html' %}
 {% load post_custom_tags %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-{% include 'header.html' %}
+{% load static %}
+{% block title %}Payamgram{% endblock %}
+{% block style %}<link rel="stylesheet" href="{% static 'css/profile.css' %}">{% endblock %}
+{% block main %}
+    <div class="main-content">
+        <div class="container mt-7">
+            <div class="row">
+                <div class="col-xl-8 m-auto order-xl-2 mb-5 mb-xl-0">
+                    <div class="card card-profile shadow">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-3 order-lg-2">
+                                <div class="card-profile-image">
+                                    <a href="#">
+                                        <img class="rounded-circle" style="width:9em;height: 9em;" alt="profile"
+                                                {% if profile_user.target.image %}
+                                             src="{{ profile_user.target.image.url }}"
+                                                {% else %}
+                                             src="{% static 'images/profile.svg' %}"
+                                                {% endif %}
+                                        >
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
+                            <div class="d-flex justify-content-between">
+                                {% if login_user.username == profile_user.username %}
+                                    <a href="{% url 'create_post' %}" class="btn btn-sm btn-info mr-4">New Post</a>
+                                    <a href="{% url 'edit-user-profile' login_user.slug %}"
+                                       class="btn btn-sm btn-default float-right">Edit Profile</a>
+                                {% else %}
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <input type="submit" name="follow" class="btn btn-sm btn-info mr-4"
+                                                {% for users in profile_user.followings.all %}
+                                                    {% if login_user == users.user %}
+                                               value="unfollow"
+                                                    {% endif %}
+                                                {% endfor %}
+                                                {% if login_user in profile_user.target.requests.all %}
+                                               value="requested"
+                                                {% else %}
+                                               value="follow"
+                                                {% endif %}
+                                        >
+                                    </form>
+                                    <a href="#" class="btn btn-sm btn-default float-left">Message</a>
+                                {% endif %}
+                                {#                                <a href="#" class="btn btn-sm btn-info mr-4">Connect</a>#}
+                                {#                                <a href="#" class="btn btn-sm btn-default float-right">Message</a>#}
+                            </div>
+                        </div>
+                        <div class="card-body pt-0 pt-md-4">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="card-profile-stats d-flex justify-content-center mt-md-5">
+                                        <div>
+                                            <span class="heading">{{ profile_user.post_set.count }}</span>
+                                            <span class="description">Posts</span>
+                                        </div>
+                                        <div>
+                                            <a href="#followers" data-toggle="modal" class="link">
+                                            <span class="heading">{{ profile_user.followings.count }}</span>
+                                            <span class="description">Followers</span>
+                                            </a>
+                                        </div>
 
-{% if user.is_authenticated %}
-    {% if login_user.username == profile_user.username %}
+                                        <div>
+                                            <a href="#followings" data-toggle="modal" class="link">
+                                            <span class="heading">{{ profile_user.follower.count }}</span>
+                                            <span class="description">Followings</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <h3>
+                                    {{ profile_user.username }}
+                                </h3>
+                                {% if profile_user.full_name %}
+                                    <div class="h5 font-weight-300">
+                                        <i class="ni location_pin mr-2"></i>{{ profile_user.full_name }}
+                                    </div>
+                                {% endif %}
+                                {% if profile_user.target.bio %}
+                                    <div class="mt-4">
+                                        <i class="ni business_briefcase-24 mr-2"></i>{{ profile_user.target.bio }}
+                                    </div>
+                                {% endif %}
+                                {% if profile_user.target.url %}
+                                    <div>
+                                        <i class="ni education_hat mr-2" ></i><a
+                                            href="{{ profile_user.target.url }}" target="_blank">{{ profile_user.target.url }}</a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% for post in profile_user.post_set.all %}
+                        <div class="card mb-4 post-card">
+                            <div class="card-body">
+                                <div class="media mb-3">
+                                    <img class="avatar" alt=""
+                                            {% if post.user.target.image %}
+                                         src="{{ post.user.target.image.url }}"
+                                            {% else %}
+                                         src="{% static 'images/profile.svg' %}"
+                                            {% endif %}
+                                    >
+                                    <div class="media-body ml-3">
+                                        <a href="{% url 'profile' post.user.slug %}"
+                                           class="link"><strong>{{ post.user.username }}</strong></a>
+                                        <div class="text-muted small">{{ post.age |age }}</div>
+                                    </div>
+                                </div>
+                                <a href="{% url 'post_detail' post.slug %}" class="link">
+                                    <p>
+                                        <strong>{{ post.title }}</strong><br>
+                                        {{ post.caption }}
+                                    </p>
+                                    {% if post.image %}
+                                        <img src="{{ post.image.url }}" alt="image" class="card-img">
+                                    {% endif %}
+                                </a>
+                            </div>
+                            <div class="card-footer">
+                                <div class="d-inline-block text-muted">
+                                    <strong>{{ post.likes.count }}</strong> <small>Likes</small>
+                                </div>
+                                <div class="d-inline-block text-muted ml-3">
+                                    <strong>{{ post.comment_set.count }}</strong> <small>Comments</small>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <aside>
-            <h2>your requests:</h2>
-            <ul>
-                {% for request in login_user.target.requests.all %}
-                    <li>
-                        {{ request.username }}
-                        <a href="{% url 'confirm_request'  request.slug %}">
-                            <button>Confirm</button>
-                        </a>
-                        <a href="{% url 'delete_request'  request.slug %}">
-                            <button>Delete</button>
-                        </a>
-                    </li>
+    <div id="followings" class="modal fade">
+	<div class="modal-dialog modal-confirm">
+		<div class="modal-content">
+			<div class="modal-header flex-column">
+				<h4 class="modal-title w-100">Followings</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			</div>
+			<div class="modal-body ">
+                {% for users in profile_user.follower.all %}
+
+                    <div class="flex justify-content-start">
+                            <a href="{% url 'profile' users.following_user.slug %}" class="flex justify-content-center align-content-center link m-d-20">
+                                <img
+                            {% if users.following_user.target.image %}
+                            src="{{ users.following_user.target.image.url}}"
+                            {% else %}
+                            src="{% static 'images/profile.svg' %}"
+                            {% endif %}
+                             class="avatar-request rounded-circle m-r-20" >
+                            <span>{{ users.following_user.username }}</span>
+                            </a>
+                                </div>
                 {% endfor %}
-            </ul>
-        </aside>
-        <a href="{% url 'create_post' %}">پست جدید</a>
-        <a href="{% url 'edit-user-profile' login_user.slug%}">ویرایش پروفایل</a>
-        <a href="{% url 'change_password'%}">change password</a>
-    {% else %}
-        {{ follow_button }}
-        <form method="post">
-            {% csrf_token %}
-            <input type="submit" name="follow"
+			</div>
+		</div>
+	</div>
+</div>
+    <div id="followers" class="modal fade">
+	<div class="modal-dialog modal-confirm">
+		<div class="modal-content">
+			<div class="modal-header flex-column">
+				<h4 class="modal-title w-100">Followers</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			</div>
+			<div class="modal-body ">
                 {% for users in profile_user.followings.all %}
-                    {% if login_user == users.user %}
-                                                    value="unfollow"
-                    {% endif %}
+
+                    <div class="flex justify-content-start">
+                            <a href="{% url 'profile' users.user.slug %}" class="flex justify-content-around align-content-center link m-d-20">
+                                <img
+                            {% if users.user.target.image %}
+                            src="{{ users.user.target.image.url}}"
+                            {% else %}
+                            src="{% static 'images/profile.svg' %}"
+                            {% endif %}
+                             class="avatar-request rounded-circle m-r-20">
+                            <span>{{ users.user.username }}</span>
+                            </a>
+                                </div>
                 {% endfor %}
-                {% if login_user in profile_user.target.requests.all %}
-                                                    value="requested"
-                {% else %}
-                                                    value="follow"
-                {% endif %}
-            >
-        </form>
-    {% endif %}
-{% endif %}
-<a href="{% url 'post_list' %}">پست ها</a>
-<a href="{% url 'user_list' %}">کاربران</a>
-
-<div>
-    <div> {{ profile_user.post_set.count }} پست</div>
-    <div>{{ profile_user.followings.count }} followers : {% for users in profile_user.followings.all %}
-        <a href="{% url 'profile' users.user.slug %}"><span>{{ users.user.username }}</span></a>&nbsp;
-        &nbsp;{% endfor %}</div>
-    <div>{{ profile_user.follower.count }}followings : {% for users in profile_user.follower.all %}
-        <a href="{% url 'profile' users.following_user.slug %}"><span>{{ users.following_user.username }}</span></a>
-        &nbsp; &nbsp;{% endfor %}</div>
+			</div>
+		</div>
+	</div>
 </div>
-{{ profile_user.username }}
-{% if profile_user.target.image %}
-    <img src="{{ profile_user.target.image.url }}" style="height: 50px;width: 50px;border-radius: 20px;" alt="">
-    {% else %}
-    no profile image
-{% endif %}
-<div>
-    <ul>
-        {% for post in profile_user.post_set.all %}
-            <li><a href="{% url 'post_detail' post.slug %}">{{ post.title }} {{ post.age | age }}</a></li>
-        {% endfor %}
-    </ul>
-</div>
-
-{#                {% for users in profile_user.followings.all %}#}
-{#                    {% if login_user in profile_user.followings.all. %}#}
-{#                                 <div>#}
-{#    <ul>#}
-{#        {% for post in profile_user.post_set.all %}#}
-{#            <li><a href="{% url 'post_detail' post.slug %}">{{ post.title }} {{ post.age | age }}</a></li>#}
-{#        {% endfor %}#}
-{#    </ul>#}
-{#</div>#}
-{#                    {% endif %}#}
-{#                {% endfor %}#}
-</body>
-</html>
+{% endblock %}

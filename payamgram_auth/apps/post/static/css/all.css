@@ -1,14 +1,40 @@
-body{
-    margin: 0;
-    padding: 0;
-    direction: rtl;
-}
+/*body{*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*    !*direction: rtl;*!*/
+/*}*/
 .flex{
     display: flex;
 }
+/*.link{*/
+/*    text-decoration: none;*/
+/*}*/
+/*.list-style{*/
+/*    list-style: none;*/
+/*}*/
+body{
+    background-color:#ebebeb59;
+}
+.main-container{
+    padding-top: 3em;
+}
 .link{
+    color: black;
     text-decoration: none;
 }
-.list-style{
-    list-style: none;
+.link:hover{
+    color: black;
+    text-decoration: none;
+}
+.m-r-20{
+  margin-right: 20px;
+}
+.m-r-10{
+  margin-right: 10px;
+}
+.m-l-20{
+  margin-left: 20px;
+}
+.m-d-20{
+  margin-bottom: 20px;
 }

@@ -1,6 +1,6 @@
-from django.db import models
-from django.utils import timezone
+from django.db.models.query import QuerySet
 
 
-class PostManager(models.Manager):
-    pass
+class PostManager(QuerySet):
+    def update(self, *args, **kwargs):
+        return super().update()
