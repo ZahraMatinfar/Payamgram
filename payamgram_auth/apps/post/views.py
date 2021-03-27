@@ -18,9 +18,14 @@ class CreatePost(LoginRequiredMixin, CreateView):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST, request.FILES)
         if form.is_valid():
-            validated_data = form.cleaned_data
-            Post.objects.create(**validated_data, user=request.user)
-            return redirect('profile', request.user.slug)
+            if (form.cleaned_data['title'] == '' or form.cleaned_data['caption'] == '') and \
+                    form.cleaned_data['image'] is None:
+                message = 'post should contain text or an image!!'
+                return render(request, 'post/create_post.html', {'message': message, 'form': form})
+            else:
+                validated_data = form.cleaned_data
+                Post.objects.create(**validated_data, user=request.user)
+                return redirect('profile', request.user.slug)
         return render(request, 'post/create_post.html')
 
 

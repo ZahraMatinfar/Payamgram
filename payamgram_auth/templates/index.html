@@ -5,10 +5,18 @@
 {% block style %}
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
 {% endblock %}
-{% block main %}
-    {% if user.is_authenticated %}
-        <a href="{% url 'find_user' %}"  style="position: relative;top: 1em;">Find other users</a>
-    {% followings_posts user %}
-    {% endif %}
-{% endblock %}
+
+    {% block main %}
+        {% if user.is_authenticated %}
+        <a href="{% url 'find_user' %}" style="position: relative;top: 1em;">Find other users</a>
+        {% followings_posts user %}
+        {% endif %}
+    {% endblock %}
+    {% block aside %}
+        {% if user.is_authenticated %}
+        <h2>Post may you like:</h2>
+        {% suggestion_posts user %}
+        {% endif %}
+    {% endblock %}
+
 <!DOCTYPE html>

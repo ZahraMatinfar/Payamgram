@@ -1,7 +1,12 @@
 {% extends 'base_index.html' %}
 {% load post_custom_tags %}
+{% load user_custom_tag %}
 {% load static %}
 {% block title %}Payamgram{% endblock %}
+{% block aside %}
+    <h2>Post may you like:</h2>
+        {% suggestion_posts user %}
+{% endblock %}
 {% block main %}
     <ul style="margin-top: 3em;">
         <li>{{ object.comment_set.count }} کامنت:
@@ -39,7 +44,7 @@
                             <div class="media-body ml-3">
                                 <a href="{% url 'profile' object.user.slug %}"
                                    class="link"><strong>{{ object.user.username }}</strong></a>
-                                <div class="text-muted small">21 hours ago</div>
+                                <div class="text-muted small">{{ object.age |age }}</div>
                             </div>
                             {% if user == object.user %}
                             <div class="dropdown">

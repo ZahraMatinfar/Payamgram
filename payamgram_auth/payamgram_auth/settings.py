@@ -119,20 +119,23 @@ LOGIN_URL = '/user/accounts/login/'
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'apps/post/static')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static/css'),
-                    os.path.join(BASE_DIR, 'static/js'),
-                    ]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# for gmail smtp
 # EMAIL_USE_TLS = True
 # EMAIL_HOST = 'smtp.gmail.com'
 # EMAIL_HOST_USER = ''
 # EMAIL_HOST_PASSWORD = ''
 # EMAIL_PORT = 587
+
+# we used a fake smtp for test
+EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.mailtrap.io'
 EMAIL_HOST_USER = '5cc35a8be0c843'
 EMAIL_HOST_PASSWORD = '699d3cc79a52f4'

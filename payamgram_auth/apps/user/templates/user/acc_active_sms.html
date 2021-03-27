@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p>code sent to {{ user.mobile }}</p>
+<p>{{ message }}</p>
+<form method="post">
+    {% csrf_token %}
+        code:
+        <input type="text" name="token">
+        <input type="submit" value="confirm">
+</form>
+no code? <a href="{% url 'activate_sms' user.slug%}">click here</a>
+</body>
+</html>

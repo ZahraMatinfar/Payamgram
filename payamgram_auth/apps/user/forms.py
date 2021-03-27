@@ -1,3 +1,5 @@
+import os
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 # from django.contrib.auth.models import User
@@ -33,7 +35,7 @@ class LoginForm(forms.Form):
     """
         a form for sig in.
     """
-    email = forms.EmailField(max_length=200, widget=forms.TextInput(attrs={'placeholder': 'Email'}), required=True)
+    auth_field = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'placeholder': 'Email or Username or Mobile'}), required=True)
     password = forms.CharField(max_length=100,
                                widget=forms.TextInput(attrs={'type': 'password', 'placeholder': 'Password'}), required=True)
 
@@ -54,3 +56,11 @@ class UserProfileForm(forms.ModelForm):
             user_profile.user = user
         user_profile.save()
         return user_profile
+
+    def clean(self):
+        cleaned_data = super().clean()
+        user_profile = super().save(commit=False)
+
+        if not cleaned_data['image']:
+            os.remove(user_profile.image.path)
+        return cleaned_data

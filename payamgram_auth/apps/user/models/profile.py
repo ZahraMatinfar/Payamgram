@@ -1,3 +1,4 @@
+import os
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
@@ -9,11 +10,15 @@ from apps.user.validators import UnicodeUsernameValidator, mobile_validator, mob
 from payamgram_auth import settings
 
 
+def get_upload_path(instance, filename):
+    return os.path.join(f'profiles/{instance.user.id}', filename)
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
     email = models.EmailField("email address", unique=True)
-
+    key = models.CharField(max_length=100, blank=True, null=True, editable=False)
     username_validator = UnicodeUsernameValidator()
     username = models.CharField(
         _('username'),
@@ -72,7 +77,8 @@ class Profile(models.Model):
     gender = models.CharField('gender', choices=GENDERS, max_length=1, blank=True)
     url = models.URLField(blank=True)
     requests = models.ManyToManyField(User, related_name='request', blank=True)
-    image = models.ImageField(upload_to='profiles/', blank=True, default='profile.svg')
+    # image = models.ImageField(upload_to='profiles/', blank=True, default='profile.svg')
+    image = models.ImageField(upload_to=get_upload_path, blank=True, default='profile.svg')
 
     def __str__(self):
         return f'{self.user.username}'

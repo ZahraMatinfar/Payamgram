@@ -1,0 +1,7 @@
+<ul>
+    {% for post in posts %}
+        <li>
+            <a href="{% url 'post_detail' post.slug%}" class="link"> {{ post.title }} </a>
+        </li>
+    {% endfor %}
+</ul>

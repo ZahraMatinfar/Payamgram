@@ -1,3 +1,5 @@
+import os
+
 from django import forms
 
 from apps.post.models import Post, Comment
@@ -37,3 +39,11 @@ class PostUpdateForm(forms.ModelForm):
             post.user = user
         post.save()
         return post
+
+    def clean(self):
+        cleaned_data = super().clean()
+        post = super().save(commit=False)
+
+        if not cleaned_data['image']:
+            os.remove(post.image.path)
+        return cleaned_data

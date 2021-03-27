@@ -3,6 +3,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
+from rest_framework.views import APIView
+
 from apps.user.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
@@ -19,6 +22,19 @@ from apps.user.models import Profile
 from apps.user.models import UserFollowing
 from apps.user.tokens import account_activation_token
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django_otp.util import random_hex
+from .totp import TOTPVerification
+import ghasedak
+
+
+def unique_key():
+    key = random_hex(20)
+    try:
+        User.objects.get(key=key)
+    except ObjectDoesNotExist:
+        return key
+    else:
+        unique_key()
 
 
 class Singing(CreateView):
@@ -27,25 +43,27 @@ class Singing(CreateView):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
+        self.object.key = unique_key()
         self.object.is_active = False
         self.object.save()
-        current_site = get_current_site(self.request)
-        mail_subject = 'Activate your account.'
-        message = render_to_string('user/acc_active_email.html', {
-            'user': self.object,
-            'domain': current_site.domain,
-            'uid': urlsafe_base64_encode(force_bytes(self.object.pk)).encode().decode(),
-            'token': account_activation_token.make_token(self.object),
-        })
-        to_email = form.cleaned_data.get('email')
-        email = EmailMessage(
-            mail_subject, message, to=[to_email]
-        )
-        email.send()
-        # super().form_valid(form)
+        if self.request.POST.get('verifyRadios') == 'email':
+            current_site = get_current_site(self.request)
+            mail_subject = 'Activate your account.'
+            message = render_to_string('user/acc_active_email.html', {
+                'user': self.object,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(self.object.pk)).encode().decode(),
+                'token': account_activation_token.make_token(self.object),
+            })
+            to_email = form.cleaned_data.get('email')
+            email = EmailMessage(
+                mail_subject, message, to=[to_email]
+            )
+            email.send()
+            return HttpResponse('Please confirm your email address to complete the registration')
+        elif self.request.POST.get('verifyRadios') == 'sms':
+            return redirect('activate_sms', self.object.slug)
         Profile.objects.create(user=self.object)
-        # login(self.request, self.object)
-        return HttpResponse('Please confirm your email address to complete the registration')
 
     def get_success_url(self):
         return reverse('index')
@@ -62,25 +80,14 @@ class Login(View):
         next = request.GET.get('next')
         message = ''
         if form.is_valid():
-            email = form.cleaned_data['email']
+            auth_field = form.cleaned_data['auth_field']
             # username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-            # user = authenticate(username=email, password=password)
-            # if user:
-            #     if user.is_active:
-            #         login(request, user)
-            #         if next:
-            #             return redirect(next)
-            #         else:
-            #             return redirect('index')
-            #     else:
-            #         message = 'User is deactivate'
-            # else:
-            #     message = 'email or password is invalid'
             try:
-                user_obj = User.objects.get(email__exact=email)
+                user_obj = User.objects.get(
+                    Q(email__exact=auth_field) | Q(username__exact=auth_field) | Q(mobile__exact=auth_field))
             except ObjectDoesNotExist:
-                message = 'email or password is invalid'
+                message = 'There is no such user'
             else:
                 user = authenticate(username=user_obj.username, password=password)
                 if user:
@@ -93,7 +100,7 @@ class Login(View):
                     else:
                         message = 'User is deactivate'
                 else:
-                    message = 'email or password is invalid'
+                    message = 'password is invalid'
         return render(request, 'user/login.html', {'form': form, 'message': message})
 
 
@@ -117,7 +124,6 @@ class ProfileView(LoginRequiredMixin, View):
 
         profile_user = User.objects.get(slug=slug)
         login_user = request.user
-        # print('...',profile_user.target.requests.all())
         follow = request.POST.get('follow')
         if follow:
             try:
@@ -141,7 +147,8 @@ class FindUser(View):
 
     def get(self, request):
         user_filter = UserFilter(request.GET, User.objects.all())
-        return render(request, 'user/find_user.html', {'user_filter': user_filter})
+        # return render(request, 'user/find_user.html', {'user_filter': user_filter})
+        return render(request, 'base_index.html', {'user_filter': user_filter})
 
 
 class ConfirmRequestView(View):
@@ -212,6 +219,37 @@ class ActivateView(View):
             user.save()
             login(request, user)
             return redirect('login')
-            # return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
         else:
             return HttpResponse('Activation link is invalid!')
+
+
+class VerifySMS(View):
+    def get(self, request, slug):
+        user = User.objects.get(slug=slug)
+        totp_obj = TOTPVerification(user.key)
+        generated_token = totp_obj.generate_token()
+        sms = ghasedak.Ghasedak("Your_API")
+        sms.send(
+            {'message': f"{generated_token}", 'receptor': "Your mobile",
+             'linenumber': "10008566"})
+        # sms.send(
+        #     {'message': f"Payamgram Activation code: {generated_token}", 'receptor': f"0{user.mobile[3:]}",
+        #      'linenumber': "10008566"})
+        return render(request, 'user/acc_active_sms.html', {'user': user})
+
+    def post(self, request, slug):
+        user = User.objects.get(slug=slug)
+        input_token = request.POST.get('token')
+        totp_obj = TOTPVerification(user.key)
+        if totp_obj.verify_token(input_token):
+            user.is_active = True
+            user.save()
+            return redirect('login')
+        message = 'this code is invalid'
+        return render(request, 'user/acc_active_sms.html', {'message': message, 'user': user})
+
+
+class Find(APIView):
+    def get(self,request):
+        users = [user.username for user in User.objects.all()]
+        return users
