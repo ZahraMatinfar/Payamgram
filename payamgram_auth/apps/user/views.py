@@ -16,7 +16,7 @@ from apps.user.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMessage
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
@@ -318,3 +318,13 @@ class EditUser(UpdateView):
         return reverse('profile', kwargs={
             'slug': self.object.user.slug,
         })
+
+
+def autocomplete(request):
+    if 'term' in request.GET:
+        qs = User.objects.filter(username__startswith=request.GET.get('term'))
+        titles = list()
+        for person in qs:
+            titles.append(person.username)
+        return JsonResponse(titles, safe=False)
+    return render(request, 'user/search.html')

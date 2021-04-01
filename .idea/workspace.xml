@@ -1,52 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="BranchesTreeState">
-    <expand>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
-    </expand>
-    <select />
-  </component>
   <component name="ChangeListManager">
-    <list default="true" id="32b165bc-974f-4116-8909-f1b9078670e0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/user/filters.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/user/serializers.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/payamgram/apps/user/templates/user/find_user.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Payamgram.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Payamgram.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+    <list default="true" id="5ef6f07b-7bac-4fc2-bb88-022a7bb4447c" name="Default Changelist" comment="add edit profile and change password 99-12-19 by Mohadese">
+      <change afterPath="$PROJECT_DIR$/.idea/socialnetwork_autho.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_2_24_2021_12_24_PM__Default_Changelist_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payamgram/apps/post/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/payamgram/apps/post/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payamgram/apps/post/templates/post/create_post.html" beforeDir="false" afterPath="$PROJECT_DIR$/payamgram/apps/post/templates/post/create_post.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payamgram/apps/post/templates/post/post_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/payamgram/apps/post/templates/post/post_detail.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payamgram/apps/post/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/payamgram/apps/post/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payamgram/apps/user/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/payamgram/apps/user/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payamgram/apps/user/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/payamgram/apps/user/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payamgram/apps/user/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/payamgram/apps/user/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payamgram/apps/user/templates/user/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/payamgram/apps/user/templates/user/profile.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payamgram/apps/user/templates/user/user_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/payamgram/apps/user/templates/user/user_detail.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payamgram/apps/user/templates/user/user_list.html" beforeDir="false" afterPath="$PROJECT_DIR$/payamgram/apps/user/templates/user/user_list.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payamgram/apps/user/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/payamgram/apps/user/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payamgram/apps/user/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/payamgram/apps/user/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payamgram/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/payamgram/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payamgram/payamgram/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/payamgram/payamgram/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/payamgram/payamgram/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/payamgram/payamgram/urls.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -56,32 +27,109 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="JupyterTrust" id="2c839416-c70e-4758-ba11-47ebfb9f3f50" />
-  <component name="ProjectId" id="1ozSB6hLASdzwH6DrpTJfqK1F2o" />
+  <component name="ProjectId" id="1pOXREqaveh5iSKEVbwUsGl1Zf3" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/payamgram" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\Maktab\maktab_python-homework\messenger_git\Payamgram\payamgram" />
-    </key>
+  <component name="RunManager">
+    <configuration name="socialnetwork_autho" type="Python.DjangoServer" factoryName="Django server">
+      <module name="socialnetwork_autho" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <option name="port" value="8000" />
+      <option name="host" value="" />
+      <option name="additionalOptions" value="" />
+      <option name="browserUrl" value="" />
+      <option name="runTestServer" value="false" />
+      <option name="runNoReload" value="false" />
+      <option name="useCustomRunCommand" value="false" />
+      <option name="customRunCommand" value="" />
+      <method v="2" />
+    </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="32b165bc-974f-4116-8909-f1b9078670e0" name="Default Changelist" comment="" />
-      <created>1614287788106</created>
+      <changelist id="5ef6f07b-7bac-4fc2-bb88-022a7bb4447c" name="Default Changelist" comment="" />
+      <created>1615055100322</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1614287788106</updated>
-      <workItem from="1614287789212" duration="681000" />
+      <updated>1615055100322</updated>
+      <workItem from="1615055103905" duration="1735000" />
+      <workItem from="1615103462198" duration="3365000" />
+      <workItem from="1615212856230" duration="601000" />
+      <workItem from="1615274562106" duration="8151000" />
+      <workItem from="1615640118908" duration="6033000" />
+      <workItem from="1615729403020" duration="1792000" />
+      <workItem from="1615792347515" duration="684000" />
+      <workItem from="1615821193425" duration="592000" />
+      <workItem from="1616916787667" duration="4998000" />
+      <workItem from="1616932799613" duration="19000" />
+      <workItem from="1617283612398" duration="57000" />
+      <workItem from="1617284485054" duration="1241000" />
     </task>
+    <task id="LOCAL-00001" summary="add delete_post in profile 99/12/16">
+      <created>1615055404011</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1615055404011</updated>
+    </task>
+    <task id="LOCAL-00002" summary="change on_delete in comment_model 99/12/16">
+      <created>1615055475636</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1615055475636</updated>
+    </task>
+    <task id="LOCAL-00003" summary="change on_delete in comment_model 99/12/16">
+      <created>1615055560228</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1615055560228</updated>
+    </task>
+    <task id="LOCAL-00004" summary="add 2 fields in profile model 99/12/16">
+      <created>1615056851466</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1615056851466</updated>
+    </task>
+    <task id="LOCAL-00005" summary="add 2 parts in user.view,urls and profile.html by Mohadese 99/12/17">
+      <created>1615118235981</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1615118235981</updated>
+    </task>
+    <task id="LOCAL-00006" summary="add edit profile and change password 99-12-19 by Mohadese">
+      <created>1615286595945</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1615286595945</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -97,5 +145,14 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="add delete_post in profile 99/12/16" />
+    <MESSAGE value="change on_delete in comment_model 99/12/16" />
+    <MESSAGE value="add 2 fields in profile model 99/12/16" />
+    <MESSAGE value="add 2 parts in user.view,urls and profile.html by Mohadese 99/12/17" />
+    <MESSAGE value="add edit profile and change password 99-12-19 by Mohadese" />
+    <option name="LAST_COMMIT_MESSAGE" value="add edit profile and change password 99-12-19 by Mohadese" />
   </component>
 </project>

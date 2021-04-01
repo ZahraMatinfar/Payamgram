@@ -3,7 +3,7 @@ from django.contrib.auth import views
 from django.views.generic import TemplateView
 
 from apps.user.views import Singing, Login, Logout, ProfileView, FindUser, ConfirmRequestView, DeleteRequestView, \
-    EditUserProfileView, change_password, ActivateView, VerifySMS, Find, PasswordResetView, EditUser
+    EditUserProfileView, change_password, ActivateView, VerifySMS, Find, PasswordResetView, EditUserوautocomplete
 
 urlpatterns = [path('signing/', Singing.as_view(), name='signing'),
                path('activate/<uidb64>/<token>/', ActivateView.as_view(), name='activate'),
@@ -31,4 +31,6 @@ urlpatterns = [path('signing/', Singing.as_view(), name='signing'),
                path('reset/<uidb64>/<token>/', views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
                path('reset/done/', views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
                path('settings/',TemplateView.as_view(template_name='user/setting.html'),name='settings'),
+
+               path('search/', autocomplete, name='search-view'),
                ]
