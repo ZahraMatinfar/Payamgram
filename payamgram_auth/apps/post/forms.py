@@ -9,7 +9,10 @@ class PostForm(forms.ModelForm):
     """
     a form for creating post
     """
-
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
     class Meta:
         model = Post
         fields = ['title', 'caption', 'image']
@@ -33,17 +36,9 @@ class PostUpdateForm(forms.ModelForm):
         model = Post
         fields = ('title', 'caption', 'image')
 
-    def save(self, user=None):
-        post = super().save(commit=False)
-        if user:
-            post.user = user
-        post.save()
-        return post
-
-    def clean(self):
-        cleaned_data = super().clean()
-        post = super().save(commit=False)
-
-        if not cleaned_data['image']:
-            os.remove(post.image.path)
-        return cleaned_data
+    # def save(self, user=None):
+    #     post = super().save(commit=False)
+    #     if user:
+    #         post.user = user
+    #     post.save()
+    #     return post

@@ -2,6 +2,7 @@
 {% load static %}
 <div class="container posts-content justify-content-center">
 {#    <div class="row">#}
+{% if posts %}
         {% for post in posts %}
             <div class="col-md-8 ">
                 <div class="card mb-4">
@@ -41,5 +42,8 @@
                 </div>
             </div>
         {% endfor %}
+{% else %}
+    <p>There is no post</p>
+{% endif %}
 {#    </div>#}
 </div>

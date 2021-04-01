@@ -1,9 +1,15 @@
+import os
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.views import PasswordContextMixin
 from django.db.models import Q
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_protect
 from rest_framework.views import APIView
 
 from apps.user.models import User
@@ -13,11 +19,11 @@ from django.core.mail import EmailMessage
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils.encoding import force_bytes, force_text
-from django.views.generic import View, CreateView, UpdateView
+from django.views.generic import View, CreateView, UpdateView, FormView
 from apps.user.filters import UserFilter
-from apps.user.forms import RegisterForm, LoginForm, UserProfileForm
+from apps.user.forms import RegisterForm, LoginForm, ProfileForm, PasswordResetForm, UserForm
 from apps.user.models import Profile
 from apps.user.models import UserFollowing
 from apps.user.tokens import account_activation_token
@@ -25,6 +31,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django_otp.util import random_hex
 from .totp import TOTPVerification
 import ghasedak
+from django.utils.translation import gettext_lazy as _
 
 
 def unique_key():
@@ -168,8 +175,8 @@ class DeleteRequestView(View):
 
 class EditUserProfileView(UpdateView):
     model = Profile
-    form_class = UserProfileForm
-    template_name = "user/user_profile.html"
+    form_class = ProfileForm
+    template_name = "user/edit_profile.html"
 
     def get_object(self, queryset=None):
         return get_object_or_404(self.model, pk=self.request.user.id)
@@ -181,7 +188,15 @@ class EditUserProfileView(UpdateView):
 
     def post(self, request, *args, **kwargs):
         self.referer = request.session.get("login_referer", "")
+        old_image = self.get_object().image
+        clear = self.request.POST.get('image-clear')
+        form = self.get_form()
+        if form.is_valid():
+            new_image = form.cleaned_data['image']
+            if old_image and old_image != new_image and clear != 'on':
+                os.remove(old_image.path)
         return super().post(request, *args, **kwargs)
+
 
     def get_success_url(self):
         return reverse('profile', kwargs={
@@ -228,9 +243,10 @@ class VerifySMS(View):
         user = User.objects.get(slug=slug)
         totp_obj = TOTPVerification(user.key)
         generated_token = totp_obj.generate_token()
-        sms = ghasedak.Ghasedak("Your_API")
+
+        sms = ghasedak.Ghasedak("")
         sms.send(
-            {'message': f"{generated_token}", 'receptor': "Your mobile",
+            {'message': f"{generated_token}", 'receptor': "",
              'linenumber': "10008566"})
         # sms.send(
         #     {'message': f"Payamgram Activation code: {generated_token}", 'receptor': f"0{user.mobile[3:]}",
@@ -250,6 +266,55 @@ class VerifySMS(View):
 
 
 class Find(APIView):
-    def get(self,request):
+    def get(self, request):
         users = [user.username for user in User.objects.all()]
         return users
+
+
+class PasswordResetView(PasswordContextMixin, FormView):
+    form_class = PasswordResetForm
+    success_url = reverse_lazy('password_reset_done')
+    template_name = 'password_reset_form.html'
+    token_generator = default_token_generator
+    title = _('Password reset')
+
+    @method_decorator(csrf_protect)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def form_valid(self, form):
+        phone_number = form.cleaned_data['phone_number']
+        try:
+            user = User.objects.get(phone_number=phone_number)
+            opts = {
+                'use_https': self.request.is_secure(),
+                'token_generator': self.token_generator,
+                'request': self.request,
+            }
+            form.save(**opts)
+        except User.DoesNotExist:
+            form.add_error(None, 'There is no such user with this mobile!!')
+            return self.form_invalid(form)
+        return super().form_valid(form)
+
+
+class EditUser(UpdateView):
+    model = User
+    form_class = UserForm
+    template_name = "user/edit_user.html"
+
+    # def get_object(self, queryset=None):
+    #     return get_object_or_404(self.model, slug=self.request.user.slug)
+
+    def form_valid(self, form):
+        if form.is_valid():
+            form.instance.user = self.request.user
+            return super().form_valid(form)
+        else:
+            form.instance.user = None
+            return render(self.request,self.template_name,{'form':form})
+
+    def get_success_url(self):
+        return reverse('profile', kwargs={
+            'slug': self.object.user.slug,
+        })

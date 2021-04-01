@@ -1,15 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    <form method="post">
+{% extends 'base_index.html' %}
+{% block title %}Post Setting{% endblock %}
+{% block main %}
+
+    <form method="post" enctype="multipart/form-data"
+          class="flex justify-content-center flex-column align-items-center">
         {% csrf_token %}
-        <p>{{ form.as_p}}</p>
-        <input type="submit" value="Edit">
+        <table>
+            <tr>{{ message }}</tr>
+            <tr class="form-group">{{ form.as_table }}</tr>
+            <tr class="form-group">
+                <td></td>
+                <td><input type="submit" value="save" style="width: 90%;margin-top: 10px;" class="btn btn-primary">
+                </td>
+            </tr>
+        </table>
 
     </form>
-</body>
-</html>
+{% endblock %}

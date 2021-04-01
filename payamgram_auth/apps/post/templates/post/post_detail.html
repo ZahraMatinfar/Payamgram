@@ -4,31 +4,10 @@
 {% load static %}
 {% block title %}Payamgram{% endblock %}
 {% block aside %}
-    <h2>Post may you like:</h2>
-        {% suggestion_posts user %}
+    <h2>Posts may you like:</h2>
+    {% suggestion_posts user %}
 {% endblock %}
 {% block main %}
-    <ul style="margin-top: 3em;">
-        <li>{{ object.comment_set.count }} کامنت:
-            {% for comment in object.comment_set.all %}
-                <p><b>{{ comment.user.username }} :</b>
-                    {{ comment.context }}
-                    {% if comment.user == request.user %}
-                        <a href="{% url 'delete_comment' comment.pk %}">
-                            <button>delete</button>
-                        </a>
-                    {% endif %}
-                </p>
-            {% endfor %}
-        </li>
-    </ul>
-
-{#    {% if user.is_authenticated %}#}
-{#        {% if user.username == object.user.username %}#}
-{#            delete#}
-{#        {% endif %}#}
-{#    {% endif %}#}
-
     <div class="container mt-7">
         <div class="row">
             <div class="col-xl-8 m-auto order-xl-2 mb-5 mb-xl-0">
@@ -47,14 +26,16 @@
                                 <div class="text-muted small">{{ object.age |age }}</div>
                             </div>
                             {% if user == object.user %}
-                            <div class="dropdown">
-                                <a href="#" data-toggle="dropdown" class="link"><i class="fa fa-ellipsis-v"></i></a>
-                                <div class="dropdown-menu">
-                                    <a href="{% url 'edit_post' object.slug %}" class="dropdown-item"><i class="fa fa-edit m-r-10"></i><span>Edit</span></a>
-                                    <a href="#Modal" data-toggle="modal" class="dropdown-item"><i class="fa  fas fa-trash m-r-10"></i><span>Delete</span></a>
+                                <div class="dropdown">
+                                    <a href="#" data-toggle="dropdown" class="link"><i class="fa fa-ellipsis-v"></i></a>
+                                    <div class="dropdown-menu">
+                                        <a href="{% url 'edit_post' object.slug %}" class="dropdown-item"><i
+                                                class="fa fa-edit m-r-10"></i><span>Edit</span></a>
+                                        <a href="#Modal" data-toggle="modal" class="dropdown-item"><i
+                                                class="fa  fas fa-trash m-r-10"></i><span>Delete</span></a>
+                                    </div>
                                 </div>
-                            </div>
-                           {% endif %}
+                            {% endif %}
                         </div>
                         <p>
                             <strong>{{ object.title }}</strong><br>
@@ -72,7 +53,8 @@
                                    class="link"><strong>{{ object.likes.count }}</strong> <small>Likes</small></a>
                             </div>
                             <div class="d-inline-block text-muted ml-3">
-                                <strong>{{ object.comment_set.count }}</strong> <small>Comments</small>
+                                <a href="#comments" data-toggle="modal"
+                                   class="link"><strong>{{ object.comment_set.count }}</strong> <small>Comments</small></a>
                             </div>
                         </div>
                         <div class="flex justify-content-between">
@@ -80,12 +62,21 @@
                                 {% csrf_token %}
                                 {{ form.context }}
                             </form>
-{#                            <form method="post">#}
-{#                                {% csrf_token %}#}
-{##}
-{#                                <input type="submit" value="like" name="like">#}
-{#                            </form>#}
-                            <a href="{% url 'like_post' object.slug %}" class="link m-l-20"><i class="fa fa-heart "></i>Like</a>
+                            {#                            <form method="post">#}
+                            {#                                {% csrf_token %}#}
+                            {##}
+                            {#                                <input type="submit" value="like" name="like">#}
+                            {#                            </form>#}
+                            <a href="{% url 'like_post' object.slug %}" class="link m-l-20"
+                               onclick="GoBackWithRefresh();" >
+                             {% static 'images/like.svg' as like%}
+                            {% static 'images/dislike.svg' as dislike%}
+                                <img
+                                        {% if user in object.likes.all %}
+                                    src="{{ like }}"
+                                    {% else %}
+                                            src="{{ dislike }}"
+                                {% endif %} style="width: 25px;"></a>
                         </div>
                     </div>
                 </div>
@@ -127,6 +118,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 </div>
                 <div class="modal-body ">
+                {% if  object.likes.all%}
                     {% for user in object.likes.all %}
                         <div class="flex justify-content-start">
                             <a href="{% url 'profile' user.slug %}"
@@ -142,6 +134,49 @@
                             </a>
                         </div>
                     {% endfor %}
+                {% else %}
+                <p>No one liked this post yet</p>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="comments" class="modal fade">
+        <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                <div class="modal-header flex-column">
+                    <h4 class="modal-title w-100">Comments</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body ">
+                        {% if  object.comment_set.all%}
+                            {% for comment in object.comment_set.all %}
+                            <div class="flex justify-content-between">
+                                <div class="flex">
+                                <a href="{% url 'profile' comment.user.slug %}"
+                               class="flex justify-content-around align-content-center link m-d-20">
+                                <img
+                                        {% if comment.user.target.image %}
+                                            src="{{ comment.user.target.image.url }}"
+                                        {% else %}
+                                            src="{% static 'images/profile.svg' %}"
+                                        {% endif %}
+                                            class="avatar-request rounded-circle m-r-20">
+                                <span>{{ comment.user.username }}</span>
+                            </a>
+                                <span class="m-l-20">: {{ comment.context }}</span>
+                                </div>
+
+                                    {% if comment.user == request.user or object.user == user%}
+                                        <a href="{% url 'delete_comment' comment.pk %}">
+                                            <i>&#215;</i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                {% else %}
+                                <p>No comment yet</p>
+                {% endif %}
                 </div>
             </div>
         </div>

@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -18,8 +20,7 @@ class CreatePost(LoginRequiredMixin, CreateView):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST, request.FILES)
         if form.is_valid():
-            if (form.cleaned_data['title'] == '' or form.cleaned_data['caption'] == '') and \
-                    form.cleaned_data['image'] is None:
+            if form.cleaned_data['caption'] == '' and form.cleaned_data['image'] is None:
                 message = 'post should contain text or an image!!'
                 return render(request, 'post/create_post.html', {'message': message, 'form': form})
             else:
@@ -50,6 +51,7 @@ class PostDetail(View):
                 Comment.objects.create(user=request.user, post=post_obj, context=form.cleaned_data['context'])
 
         return redirect('post_detail', slug)
+        # return redirect('profile', post_obj.user)
 
 
 class DeleteComment(View):
@@ -63,24 +65,41 @@ class DeleteComment(View):
 
 class EditPost(LoginRequiredMixin, UpdateView):
     model = Post
-    template_name = 'post/create_post.html'
-    # form_class = PostUpdateForm
+    template_name = 'post/post_update.html'
     form_class = PostUpdateForm
 
     def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
-
-    def test_func(self):
-        post = self.get_object()
-        if self.request.user == post.user:
-            return True
-        return False
+        if form.cleaned_data['caption'] == '' and form.cleaned_data['image'] is None:
+            message = 'post should contain text or an image!!'
+            return render(self.request, 'post/post_update.html', {'message': message, 'form': form})
+        else:
+            form.instance.user = self.request.user
+            return super().form_valid(form)
 
     def get_success_url(self):
         return reverse('post_detail', kwargs={
             'slug': self.object.slug,
         })
+
+    def post(self, request, *args, **kwargs):
+        """
+        for removing unuseful image in media folder ,post function has been overridden.
+         old_image: image of post before running of post func
+         clear:value of clear check box
+         new_image: image of post after editing
+        :return: functions of form
+        """
+        clear = self.request.POST.get('image-clear')
+        object = self.get_object()
+        old_image = object.image
+        if clear == 'on':
+            os.remove(object.image.path)
+        form = self.get_form()
+        if form.is_valid():
+            new_image = form.cleaned_data['image']
+            if old_image and old_image != new_image and clear != 'on':
+                os.remove(old_image.path)
+        return super().post(request, *args, **kwargs)
 
 
 class DeletePost(View):
@@ -103,3 +122,4 @@ class LikePost(View):
             post_obj.likes.add(request.user)
         post_obj.save()
         return redirect('post_detail', slug)
+        # return redirect('profile', post_obj.user)

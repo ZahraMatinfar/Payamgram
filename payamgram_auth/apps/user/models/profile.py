@@ -79,6 +79,7 @@ class Profile(models.Model):
     requests = models.ManyToManyField(User, related_name='request', blank=True)
     # image = models.ImageField(upload_to='profiles/', blank=True, default='profile.svg')
     image = models.ImageField(upload_to=get_upload_path, blank=True, default='profile.svg')
+    # image = models.ImageField(upload_to=get_upload_path, blank=True)
 
     def __str__(self):
         return f'{self.user.username}'

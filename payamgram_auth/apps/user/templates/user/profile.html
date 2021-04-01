@@ -124,6 +124,7 @@
                                     <div class="text-muted small">{{ post.age |age }}</div>
                                 </div>
                             </div>
+                            <abbr title="Click for like and comment" class="abbr">
                             <a href="{% url 'post_detail' post.slug %}" class="link">
                                 <p>
                                     <strong>{{ post.title }}</strong><br>
@@ -133,6 +134,7 @@
                                     <img src="{{ post.image.url }}" alt="image" class="card-img">
                                 {% endif %}
                             </a>
+                            </abbr>
                         </div>
                         <div class="card-footer">
                             <div class="d-inline-block text-muted">

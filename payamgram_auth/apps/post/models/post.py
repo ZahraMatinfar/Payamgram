@@ -10,13 +10,13 @@ def get_upload_path(instance, filename):
 
 
 class Post(models.Model):
-    title = models.CharField(max_length=50, blank=True)
+    title = models.CharField(max_length=50)
     caption = models.TextField(blank=True)
     published_date = models.DateTimeField(editable=False, auto_now_add=True)
     slug = AutoSlugField(populate_from=['title'], unique=True, allow_unicode=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='likes', default=None, blank=True)
-    image = models.ImageField(upload_to=get_upload_path, blank=True)
+    image = models.ImageField(upload_to=get_upload_path, blank=True, null=True)
 
     def __str__(self):
         return f'{self.id} : {self.title} published at {self.published_date}'
@@ -34,5 +34,5 @@ class Post(models.Model):
 
     def delete(self, using=None, keep_parents=False):
         super().delete(using, keep_parents)
-        print(self.image.path)
+        # print(self.image.path)
         self.image.delete(False)
