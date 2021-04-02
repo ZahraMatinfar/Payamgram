@@ -109,11 +109,24 @@
                 } ,
             {% endfor %}
         ];
-        $("#search").autocomplete({
+         $("#search").autocomplete({
+            {#minLength: 2,#}
             source: availableTags,
-            select: function (event, ui) {
+            select: function (people, ui) {
                 window.location.href = ui.item.value;
-            }
-        });
+            },
+            position: {my: "right top", at: "right bottom"},
+            focus: function (event, ui) {
+                $("#search").val(ui.item.label);
+                return false;
+            },
+
+        })
+        ;
+        $("#search > option").filter(function () {
+            return this.value.substring(0) === 'user.username.0';
+        }).remove();
+
     });
+
 </script>

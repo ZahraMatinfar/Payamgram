@@ -32,8 +32,8 @@ class Post(models.Model):
         return timezone.now() - self.published_date
 
     class Meta:
-        ordering = ['-published_date__year', '-published_date__day', '-published_date__hour',
-                    '-published_date__minute', '-published_date__second']
+        ordering = ['published_date__year', 'published_date__day', 'published_date__hour',
+                    'published_date__minute', 'published_date__second']
 
     def delete(self, using=None, keep_parents=False):
         super().delete(using, keep_parents)
