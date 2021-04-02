@@ -1,24 +1,26 @@
-import os
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django_extensions.db.fields import AutoSlugField
 from django.utils.translation import ugettext_lazy as _
 from django.core.mail import send_mail
-from apps.user.managers import UserManager
+from apps.user.manager import UserManager
 from apps.user.validators import UnicodeUsernameValidator, mobile_validator, mobile_len_validator
-from payamgram_auth import settings
+from socialnetwork import settings
+import os
 
 
 def get_upload_path(instance, filename):
-    return os.path.join(f'profiles/{instance.user.id}', filename)
+    """
+    :return: Specifies the location of the image of a profile
+    """
+    return os.path.join(f'profiles/{instance.user.username}', filename)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
     email = models.EmailField("email address", unique=True)
-    key = models.CharField(max_length=100, blank=True, null=True, editable=False)
     username_validator = UnicodeUsernameValidator()
     username = models.CharField(
         _('username'),
@@ -35,10 +37,17 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_superuser = models.BooleanField(_('superuser'), default=False)
     is_staff = models.BooleanField(_('staff'), default=False)
     mobile = models.CharField(max_length=13, validators=[mobile_validator, mobile_len_validator], unique=True)
+    key = models.CharField(max_length=100, null=True, blank=True, editable=False)
     objects = UserManager()
 
     USERNAME_FIELD = 'username'
+    """
+    A string describing the name of the field on the user model that is used as the unique identifier
+    """
     REQUIRED_FIELDS = []
+
+    def __str__(self):
+        return f'{self.username}'
 
     class Meta:
         verbose_name = _('User')
@@ -77,12 +86,7 @@ class Profile(models.Model):
     gender = models.CharField('gender', choices=GENDERS, max_length=1, blank=True)
     url = models.URLField(blank=True)
     requests = models.ManyToManyField(User, related_name='request', blank=True)
-    # image = models.ImageField(upload_to='profiles/', blank=True, default='profile.svg')
     image = models.ImageField(upload_to=get_upload_path, blank=True, default='profile.svg')
-    # image = models.ImageField(upload_to=get_upload_path, blank=True)
-
-    def __str__(self):
-        return f'{self.user.username}'
 
     def delete(self, using=None, keep_parents=False):
         super().delete(using, keep_parents)

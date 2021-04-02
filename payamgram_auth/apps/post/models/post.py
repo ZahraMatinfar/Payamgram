@@ -6,7 +6,10 @@ from payamgram_auth import settings
 
 
 def get_upload_path(instance, filename):
-    return os.path.join(f'posts/{instance.user.id}', filename)
+    """
+    :return: Specifies the location of the image of a post
+    """
+    return os.path.join(f'posts/{instance.user.username}', filename)
 
 
 class Post(models.Model):

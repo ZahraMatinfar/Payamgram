@@ -1,12 +1,17 @@
 import os
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, redirect
-from django.urls import reverse
-from django.views.generic import View, ListView, CreateView, UpdateView
 
-from apps.post.forms import PostForm, CommentForm, PostUpdateForm
-from apps.post.models import Post, Comment
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+from django.views.generic import View, ListView, UpdateView, CreateView
+
+from .forms import PostForm, CommentForm, PostUpdateForm
+# from apps.post.models import Post, Comment
+from .models import Comment
+from .models.post import Post
+from django.views.generic import FormView
+from django.views.generic import UpdateView
 
 
 class CreatePost(LoginRequiredMixin, CreateView):
@@ -18,7 +23,7 @@ class CreatePost(LoginRequiredMixin, CreateView):
     form_class = PostForm
 
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST, request.FILES)
+        form = self.form_class(request.POST, request.FILES)  # ?
         if form.is_valid():
             if form.cleaned_data['caption'] == '' and form.cleaned_data['image'] is None:
                 message = 'post should contain text or an image!!'
@@ -26,7 +31,8 @@ class CreatePost(LoginRequiredMixin, CreateView):
             else:
                 validated_data = form.cleaned_data
                 Post.objects.create(**validated_data, user=request.user)
-                return redirect('profile', request.user.slug)
+
+            return redirect('profile', request.user.slug)
         return render(request, 'post/create_post.html')
 
 
@@ -35,7 +41,9 @@ class PostList(ListView):
 
 
 class PostDetail(View):
-
+    """
+    classView for detail of post
+    """
     def get(self, request, slug):
         form = CommentForm()
         post_obj = Post.objects.get(slug=slug)
@@ -43,7 +51,6 @@ class PostDetail(View):
 
     def post(self, request, slug):
         form = CommentForm(request.POST)
-        delete_comment = request.POST.get('delete_comment')
         post_obj = Post.objects.get(slug=slug)
 
         if form.is_valid():
@@ -51,24 +58,18 @@ class PostDetail(View):
                 Comment.objects.create(user=request.user, post=post_obj, context=form.cleaned_data['context'])
 
         return redirect('post_detail', slug)
-        # return redirect('profile', post_obj.user)
 
 
-class DeleteComment(View):
-    @staticmethod
-    def get(request, pk):
-        comment = Comment.objects.get(id=pk)
-        post_slug = comment.post.slug
-        comment.delete()
-        return redirect('post_detail', post_slug)
-
-
-class EditPost(LoginRequiredMixin, UpdateView):
+class PostUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    updateView for update or changing the post
+    """
     model = Post
     template_name = 'post/post_update.html'
     form_class = PostUpdateForm
 
     def form_valid(self, form):
+
         if form.cleaned_data['caption'] == '' and form.cleaned_data['image'] is None:
             message = 'post should contain text or an image!!'
             return render(self.request, 'post/post_update.html', {'message': message, 'form': form})
@@ -102,8 +103,22 @@ class EditPost(LoginRequiredMixin, UpdateView):
         return super().post(request, *args, **kwargs)
 
 
-class DeletePost(View):
+class DeleteComment(View):
+    """
+    classView for deleting comment
+    """
+    @staticmethod
+    def get(request, pk):
+        comment = Comment.objects.get(id=pk)
+        post_slug = comment.post.slug
+        comment.delete()
+        return redirect('post_detail', post_slug)
 
+
+class DeletePost(View):
+    """
+    classView for deleting a post
+    """
     @staticmethod
     def get(request, slug):
         post = Post.objects.get(slug=slug)
@@ -113,6 +128,9 @@ class DeletePost(View):
 
 
 class LikePost(View):
+    """
+    classView for liking each post, It checks if user has liked before or not
+    """
     def get(self, request, slug):
         post_obj = Post.objects.get(slug=slug)
         likes = post_obj.likes.all()
@@ -122,4 +140,3 @@ class LikePost(View):
             post_obj.likes.add(request.user)
         post_obj.save()
         return redirect('post_detail', slug)
-        # return redirect('profile', post_obj.user)

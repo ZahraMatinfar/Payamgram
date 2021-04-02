@@ -2,17 +2,88 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css">
     <title>Title</title>
+    <style>
+        .align {
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            color: #888;
+            font-family: sans-serif;
+            line-height: 1.5;
+            margin: 0;
+            min-height: 100%;
+            text-align: center;
+        }
+
+        h3 {
+            font-size: 20px;
+            margin-top: 1.5em;
+            color: #484545;
+            margin-bottom: 1.5em;
+        }
+
+        p {
+            margin-bottom: 1.5em;
+            margin-top: 1.5em;
+        }
+
+        input {
+            font: inherit;
+            outline: 0;
+        }
+
+        .form__field {
+            position: relative;
+        }
+
+        .form__input {
+            border-radius: 26.25em;
+            border-style: solid;
+            border-width: 3px;
+            font-size: 26px;
+            padding: 0 -1px 0 0;
+            width: 140px;
+        }
+
+        .form__input:valid {
+            border-color: forestgreen;
+        }
+
+
+        .form__input:invalid {
+            border-color: firebrick;
+        }
+
+
+    </style>
 </head>
 <body>
 <p>code sent to {{ user.mobile }}</p>
 <p>{{ message }}</p>
+<h3>Enter your code</h3>
+
 <form method="post">
     {% csrf_token %}
-        code:
-        <input type="text" name="token">
-        <input type="submit" value="confirm">
+
+    <div class="form__field">
+        <input type="password" name="token" class="form__input" pattern=".{6,}" required>
+        <input type="submit" value="confirm" class="form__input">
+
+    </div>
+
 </form>
-no code? <a href="{% url 'activate_sms' user.slug%}">click here</a>
+
+<p>no code? <a href="{% url 'activate_sms' user.slug %}">click here</a></p>
+
 </body>
 </html>

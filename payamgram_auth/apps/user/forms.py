@@ -2,24 +2,22 @@ import os
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-# from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.validators import RegexValidator
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from django.utils.translation import gettext_lazy as _
 from ghasedak import ghasedak
 
-from apps.user.models import User
-from django.utils.translation import gettext_lazy as _
 from apps.user.models import Profile
-from apps.user.totp import TOTPVerification
+from apps.user.models import User
 
 
 class RegisterForm(UserCreationForm):
     """
-    a form for sig in.
+    A form for signing up.
     """
 
     def __init__(self, *args, **kwargs):
@@ -42,7 +40,7 @@ class RegisterForm(UserCreationForm):
 
 class LoginForm(forms.Form):
     """
-        a form for sig in.
+    A form for signing in.
     """
     auth_field = forms.CharField(max_length=200,
                                  widget=forms.TextInput(attrs={'placeholder': 'Email or Username or Mobile'}),
@@ -58,6 +56,10 @@ class LoginForm(forms.Form):
 
 
 class ProfileForm(forms.ModelForm):
+    """
+    Information about user profile
+    """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for visible in self.visible_fields():
@@ -66,9 +68,6 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ('bio', 'url', 'gender', 'image')
-        # widgets={
-        #     'image':forms.FileInput()
-        # }
 
     def save(self, user=None):
         user_profile = super().save(commit=False)
@@ -87,6 +86,10 @@ class ProfileForm(forms.ModelForm):
 
 
 class UserForm(forms.ModelForm):
+    """
+    Information about user account
+    """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for visible in self.visible_fields():
@@ -105,28 +108,17 @@ class UserForm(forms.ModelForm):
 
 
 class PasswordResetForm(forms.Form):
+    """
+    A form for reset password
+    """
     phone_number = forms.CharField(label=_('mobile'), max_length=11,
                                    validators=[RegexValidator(regex=r'+98(\d{9})$')])
 
-    def send_sms(self, phone_number, reset_link):
-        sms = ghasedak.Ghasedak("80676683d3ea3adb452621ec7745a697d4265c609ce9c13c810d34f23add946a")
+    def send_sms(self, reset_link):
+        sms = ghasedak.Ghasedak("f94866bb4670a2a772fcd7e70d67683716ec16af0c65ce9024326f0c5e94148f")
         sms.send(
-            {'message': f"{reset_link}", 'receptor': "09169628133",
+            {'message': f"{reset_link}", 'receptor': "09372190740",
              'linenumber': "10008566"})
-        # try:
-        #     api = kavenegar.KavenegarAPI(settings.KAVENEGAR_APIKEY)
-        #     message = f'برای بازیابی رمز عبور روی لینک زیر کلیک کنید \n {reset_link}'
-        #     params = {
-        #         'sender': '1000596446',
-        #         'receptor': phone_number,
-        #         'message': message,
-        #     }
-        #     response = api.sms_send(params)
-        #     print(response)
-        # except kavenegar.APIException as e:
-        #     print(e)
-        # except kavenegar.HTTPException as e:
-        #     print(e)
 
     def get_users(self, phone_number):
         return User.objects.get(phone_number=phone_number)

@@ -1,40 +1,42 @@
 import os
-
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.views import PasswordContextMixin
-from django.db.models import Q
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_protect
-from rest_framework.views import APIView
+from ghasedak import ghasedak
 
 from apps.user.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMessage
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.utils.encoding import force_bytes, force_text
 from django.views.generic import View, CreateView, UpdateView, FormView
 from apps.user.filters import UserFilter
-from apps.user.forms import RegisterForm, LoginForm, ProfileForm, PasswordResetForm, UserForm
+from apps.user.forms import RegisterForm, LoginForm, ProfileForm, UserForm, PasswordResetForm
 from apps.user.models import Profile
 from apps.user.models import UserFollowing
 from apps.user.tokens import account_activation_token
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.http import JsonResponse
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.views import PasswordContextMixin
+from django.db.models import Q
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_protect
 from django_otp.util import random_hex
 from .totp import TOTPVerification
 import ghasedak
-from django.utils.translation import gettext_lazy as _
 
 
 def unique_key():
+    """
+    :return: create random key to send sms
+    """
     key = random_hex(20)
     try:
         User.objects.get(key=key)
@@ -44,9 +46,12 @@ def unique_key():
         unique_key()
 
 
-class Singing(CreateView):
+class Signup(CreateView):
+    """
+    classView for signing up
+    """
     form_class = RegisterForm
-    template_name = 'user/signing.html'
+    template_name = 'user/signup.html'
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -71,12 +76,16 @@ class Singing(CreateView):
         elif self.request.POST.get('verifyRadios') == 'sms':
             return redirect('activate_sms', self.object.slug)
         Profile.objects.create(user=self.object)
+        return HttpResponse('Please confirm your email address to complete the registration')
 
     def get_success_url(self):
         return reverse('index')
 
 
 class Login(View):
+    """
+    classView for signing in
+    """
 
     def get(self, request):
         form = LoginForm()
@@ -88,7 +97,6 @@ class Login(View):
         message = ''
         if form.is_valid():
             auth_field = form.cleaned_data['auth_field']
-            # username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             try:
                 user_obj = User.objects.get(
@@ -107,11 +115,15 @@ class Login(View):
                     else:
                         message = 'User is deactivate'
                 else:
-                    message = 'password is invalid'
+                    message = 'email or password is invalid'
         return render(request, 'user/login.html', {'form': form, 'message': message})
 
 
 class Logout(LoginRequiredMixin, View):
+    """
+    classView for logging out
+    """
+
     def get(self, request):
         logout(request)
         return redirect('index')
@@ -154,11 +166,15 @@ class FindUser(View):
 
     def get(self, request):
         user_filter = UserFilter(request.GET, User.objects.all())
-        # return render(request, 'user/find_user.html', {'user_filter': user_filter})
-        return render(request, 'base_index.html', {'user_filter': user_filter})
+        # user = request.user
+        return render(request, 'user/find_user.html', {'user_filter': user_filter})
 
 
 class ConfirmRequestView(View):
+    """
+    It will be called if a user confirm someone's request
+    """
+
     def get(self, request, slug):
         user = User.objects.get(slug=slug)
         request.user.target.requests.remove(user)
@@ -167,6 +183,10 @@ class ConfirmRequestView(View):
 
 
 class DeleteRequestView(View):
+    """
+    It will be called if a user delete someone's request
+    """
+
     def get(self, request, slug):
         user = User.objects.get(slug=slug)
         request.user.target.requests.remove(user)
@@ -174,6 +194,9 @@ class DeleteRequestView(View):
 
 
 class EditUserProfileView(UpdateView):
+    """
+    updating user profile
+    """
     model = Profile
     form_class = ProfileForm
     template_name = "user/edit_profile.html"
@@ -197,7 +220,6 @@ class EditUserProfileView(UpdateView):
                 os.remove(old_image.path)
         return super().post(request, *args, **kwargs)
 
-
     def get_success_url(self):
         return reverse('profile', kwargs={
             'slug': self.object.user.slug,
@@ -205,12 +227,15 @@ class EditUserProfileView(UpdateView):
 
 
 def change_password(request):
+    """
+    :return: changing password
+    """
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)
-            messages.success(request, 'Your password was successfully updated!')
+            messages.success(request, 'Your password was successfully updated!!!!!!!')
             return redirect('profile', request.user.slug)
         else:
             messages.error(request, 'Please correct the error below.')
@@ -222,6 +247,9 @@ def change_password(request):
 
 
 class ActivateView(View):
+    """
+    classView for activate user
+    """
     def get(self, request, uidb64, token):
 
         try:
@@ -238,15 +266,30 @@ class ActivateView(View):
             return HttpResponse('Activation link is invalid!')
 
 
+def autocomplete(request):
+    """
+    :return: find users automatically
+    """
+    if 'term' in request.GET:
+        qs = User.objects.filter(username__startswith=request.GET.get('term'))
+        titles = list()
+        for person in qs:
+            titles.append(person.username)
+        return JsonResponse(titles, safe=False)
+    return render(request, 'user/search.html')
+
+
 class VerifySMS(View):
+    """
+    classView for sending code to user's mobile
+    """
     def get(self, request, slug):
         user = User.objects.get(slug=slug)
         totp_obj = TOTPVerification(user.key)
         generated_token = totp_obj.generate_token()
-
-        sms = ghasedak.Ghasedak("")
+        sms = ghasedak.Ghasedak("f94866bb4670a2a772fcd7e70d67683716ec16af0c65ce9024326f0c5e94148f")
         sms.send(
-            {'message': f"{generated_token}", 'receptor': "",
+            {'message': f"{generated_token}", 'receptor': "09372190740",
              'linenumber': "10008566"})
         # sms.send(
         #     {'message': f"Payamgram Activation code: {generated_token}", 'receptor': f"0{user.mobile[3:]}",
@@ -265,18 +308,12 @@ class VerifySMS(View):
         return render(request, 'user/acc_active_sms.html', {'message': message, 'user': user})
 
 
-class Find(APIView):
-    def get(self, request):
-        users = [user.username for user in User.objects.all()]
-        return users
-
-
 class PasswordResetView(PasswordContextMixin, FormView):
     form_class = PasswordResetForm
     success_url = reverse_lazy('password_reset_done')
     template_name = 'password_reset_form.html'
     token_generator = default_token_generator
-    title = _('Password reset')
+    title = 'Password reset'
 
     @method_decorator(csrf_protect)
     def dispatch(self, *args, **kwargs):
@@ -299,12 +336,12 @@ class PasswordResetView(PasswordContextMixin, FormView):
 
 
 class EditUser(UpdateView):
+    """
+    classView for editing user's account
+    """
     model = User
     form_class = UserForm
     template_name = "user/edit_user.html"
-
-    # def get_object(self, queryset=None):
-    #     return get_object_or_404(self.model, slug=self.request.user.slug)
 
     def form_valid(self, form):
         if form.is_valid():
@@ -312,19 +349,9 @@ class EditUser(UpdateView):
             return super().form_valid(form)
         else:
             form.instance.user = None
-            return render(self.request,self.template_name,{'form':form})
+            return render(self.request, self.template_name, {'form': form})
 
     def get_success_url(self):
         return reverse('profile', kwargs={
             'slug': self.object.user.slug,
         })
-
-
-def autocomplete(request):
-    if 'term' in request.GET:
-        qs = User.objects.filter(username__startswith=request.GET.get('term'))
-        titles = list()
-        for person in qs:
-            titles.append(person.username)
-        return JsonResponse(titles, safe=False)
-    return render(request, 'user/search.html')
