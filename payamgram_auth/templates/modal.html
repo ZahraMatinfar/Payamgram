@@ -1,0 +1,20 @@
+<div id="myModal" class="modal fade">
+	<div class="modal-dialog modal-confirm">
+		<div class="modal-content">
+			<div class="modal-header flex-column">
+				<div class="icon-box">
+					<i class="material-icons">&#xE5CD;</i>
+				</div>
+				<h4 class="modal-title w-100">Are you sure?</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			</div>
+			<div class="modal-body">
+				<p>{{ message }}</p>
+			</div>
+			<div class="modal-footer justify-content-center">
+                <a href="{% url 'logout' %}"><button type="button" class="btn btn-danger">{{ confirm_button }}</button></a>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+			</div>
+		</div>
+	</div>
+</div>

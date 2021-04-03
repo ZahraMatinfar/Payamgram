@@ -1,0 +1,49 @@
+{% load post_custom_tags %}
+{% load static %}
+<div class="container posts-content justify-content-center">
+    {% if posts %}
+        {% for post in posts %}
+            <div class="col-md-8 ">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="media mb-3">
+                            <img class="avatar" alt=""
+                            {% if post.user.target.image %}
+                                src="{{ post.user.target.image.url }}"
+                                {% else %}
+                                 src="{% static 'images/profile.svg' %}"
+                                    {% endif %}
+                            >
+                            <div class="media-body ml-3">
+                                <a href="{% url 'profile' post.user.slug %}"
+                                   class="link"><strong>{{ post.user.username }}</strong></a>
+                                <div class="text-muted small">{{ post.age |age }}</div>
+                            </div>
+                        </div>
+                     <abbr title="Click for like and comment"  style="text-decoration: none;">
+                        <a href="{% url 'post_detail' post.slug %}" class="link">
+                            <p>
+                            <strong>{{ post.title }}</strong><br>
+                            {{ post.caption }}
+                            </p>
+                            {% if post.image %}
+                                <img src="{{ post.image.url }}" alt="image" class="card-img">
+                            {% endif %}
+                        </a>
+                     </abbr>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-inline-block text-muted">
+                            <strong>{{ post.likes.count }}</strong> <small>Likes</small>
+                        </div>
+                        <div class="d-inline-block text-muted ml-3">
+                            <strong>{{ post.comment_set.count }}</strong> <small>Comments</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+{% else %}
+    <p>There is no post</p>
+{% endif %}
+</div>

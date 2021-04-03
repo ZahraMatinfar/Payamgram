@@ -1,0 +1,37 @@
+{% extends 'user/setting.html' %}
+{% block header %}
+    Edit Profile
+{% endblock %}
+{% block form_atrr %}
+    enctype="multipart/form-data"  method="post"
+{% endblock %}
+{% block form %}
+    <div class="flex justify-content-around">
+
+        <div class="form-inline flex flex-column align-items-sm-start">
+            <label class="form-label"><b>bio</b></label><br>
+            {{ form.bio }}
+        </div>
+        <div class="flex flex-column">
+            <div class="form-group">
+                <label class="form-label"><b>Url</b></label><br>
+                {{ form.url }}
+            </div>
+            <div class="form-group">
+                <label class="form-label"><b>Gender</b></label><br>
+                {{ form.gender }}
+            </div>
+            <div class="form-group ">
+                <label class="form-label"><b>Image</b></label><br>
+                {{ form.image }}
+            </div>
+        </div>
+
+    </div>
+    <div class="form-group">
+        <input type="submit" value="save" class="btn btn-primary m-l-20">
+    </div>
+
+
+
+{% endblock %}

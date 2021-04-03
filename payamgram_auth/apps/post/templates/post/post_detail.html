@@ -1,0 +1,179 @@
+{% extends 'base_index.html' %}
+{% load post_custom_tags %}
+{% load user_custom_tag %}
+{% load static %}
+{% block title %}Payamgram{% endblock %}
+{% block aside %}
+    <h2>Posts may you like:</h2>
+    {% suggestion_posts user %}
+{% endblock %}
+{% block main %}
+    <div class="container mt-7">
+        <div class="row">
+            <div class="col-xl-8 m-auto order-xl-2 mb-5 mb-xl-0">
+                <div class="card mb-4 post-card">
+                    <div class="card-body">
+                        <div class="media mb-3">
+                            <img class="avatar" alt=""
+                                    {% if object.user.target.image %}
+                                 src="{{ object.user.target.image.url }}"
+                                    {% else %}
+                                 src="{% static 'images/profile.svg' %}"
+                                    {% endif %}>
+                            <div class="media-body ml-3">
+                                <a href="{% url 'profile' object.user.slug %}"
+                                   class="link"><strong>{{ object.user.username }}</strong></a>
+                                <div class="text-muted small">{{ object.age |age }}</div>
+                            </div>
+                            {% if user == object.user %}
+                                <div class="dropdown">
+                                    <a href="#" data-toggle="dropdown" class="link"><i class="fa fa-ellipsis-v"></i></a>
+                                    <div class="dropdown-menu">
+                                        <a href="{% url 'edit_post' object.slug %}" class="dropdown-item"><i
+                                                class="fa fa-edit m-r-10"></i><span>Edit</span></a>
+                                        <a href="#Modal" data-toggle="modal" class="dropdown-item"><i
+                                                class="fa  fas fa-trash m-r-10"></i><span>Delete</span></a>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <p>
+                            <strong>{{ object.title }}</strong><br>
+                            {{ object.caption }}
+                        </p>
+                        {% if object.image %}
+                            <img src="{{ object.image.url }}" alt="image" class="card-img">
+                        {% endif %}
+
+                    </div>
+                    <div class="card-footer flex justify-content-between">
+                        <div class="flex">
+                            <div class="d-inline-block text-muted">
+                                <a href="#likes" data-toggle="modal"
+                                   class="link"><strong>{{ object.likes.count }}</strong> <small>Likes</small></a>
+                            </div>
+                            <div class="d-inline-block text-muted ml-3">
+                                <a href="#comments" data-toggle="modal"
+                                   class="link"><strong>{{ object.comment_set.count }}</strong> <small>Comments</small></a>
+                            </div>
+                        </div>
+                        <div class="flex justify-content-between">
+                            <form method="post">
+                                {% csrf_token %}
+                                {{ form.context }}
+                            </form>
+                            <a href="{% url 'like_post' object.slug %}" class="link m-l-20"
+                               onclick="GoBackWithRefresh();" >
+                             {% static 'images/like.svg' as like%}
+                            {% static 'images/dislike.svg' as dislike%}
+                                <img
+                                        {% if user in object.likes.all %}
+                                    src="{{ like }}"
+                                    {% else %}
+                                            src="{{ dislike }}"
+                                {% endif %} style="width: 25px;"></a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div id="Modal" class="modal fade">
+        <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                <div class="modal-header flex-column">
+                    <div class="icon-box">
+                        <i class="material-icons">&#xE5CD;</i>
+                    </div>
+                    <h4 class="modal-title w-100">Are you sure?</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Do you really want to delete this post? This process cannot be undone.</p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <a href="{% url 'delete_post' object.slug %}">
+                        <button type="button" class="btn btn-danger">Delete</button>
+                    </a>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="likes" class="modal fade">
+        <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                <div class="modal-header flex-column">
+                    <h4 class="modal-title w-100">Likes</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body ">
+                {% if  object.likes.all%}
+                    {% for user in object.likes.all %}
+                        <div class="flex justify-content-start">
+                            <a href="{% url 'profile' user.slug %}"
+                               class="flex justify-content-around align-content-center link m-d-20">
+                                <img
+                                        {% if user.target.image %}
+                                            src="{{ user.target.image.url }}"
+                                        {% else %}
+                                            src="{% static 'images/profile.svg' %}"
+                                        {% endif %}
+                                            class="avatar-request rounded-circle m-r-20">
+                                <span>{{ user.username }}</span>
+                            </a>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                <p>No one liked this post yet</p>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="comments" class="modal fade">
+        <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                <div class="modal-header flex-column">
+                    <h4 class="modal-title w-100">Comments</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body ">
+                        {% if  object.comment_set.all%}
+                            {% for comment in object.comment_set.all %}
+                            <div class="flex justify-content-between">
+                                <div class="flex">
+                                <a href="{% url 'profile' comment.user.slug %}"
+                               class="flex justify-content-around align-content-center link m-d-20">
+                                <img
+                                        {% if comment.user.target.image %}
+                                            src="{{ comment.user.target.image.url }}"
+                                        {% else %}
+                                            src="{% static 'images/profile.svg' %}"
+                                        {% endif %}
+                                            class="avatar-request rounded-circle m-r-20">
+                                <span>{{ comment.user.username }}</span>
+                            </a>
+                                <span class="m-l-20">: {{ comment.context }}</span>
+                                </div>
+
+                                    {% if comment.user == request.user or object.user == user%}
+                                        <a href="{% url 'delete_comment' comment.pk %}">
+                                            <i>&#215;</i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                {% else %}
+                                <p>No comment yet</p>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

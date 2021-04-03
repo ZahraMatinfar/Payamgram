@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="" method="get" autocomplete="off">
+    {{ user_filter.form.as_p }}
+</form>
+{% if  user_filter.data %}
+    <table>
+        {% if user_filter.qs %}
+            {% for user in user_filter.qs %}
+                <tr>
+                    <td><a href="{% url 'profile' user.slug %}">{{ user.username }}</a></td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <p>نتیجه ای موجود نیست</p>
+        {% endif %}
+    </table>
+{% endif %}
+</body>
+</html>

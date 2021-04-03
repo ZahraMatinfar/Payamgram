@@ -1,0 +1,29 @@
+{% extends 'base_index.html' %}
+{% block title %}Setting{% endblock %}
+{% block main %}
+<div class="container bootstrap snippet">
+    <br>
+    <div class="row justify-content-center">
+
+    	<div class="col-sm-9">
+            <h3 class="text-center">{% block header %}{% endblock %}</h3><br>
+            <ul class="nav nav-tabs flex justify-content-around">
+                <li class="active"><a  href="{% url 'edit-user-profile' user.slug%}">Profile</a></li>
+                <li><a  href="{% url 'edit-account' user.slug%}">Account</a></li>
+                <li><a  href="{% url 'change_password' %}">Password</a></li>
+              </ul>
+
+
+          </div><!--/tab-content-->
+    <div class="col-sm-9">
+        <br>
+<form action="" {% block form_atrr %}{% endblock %}>
+    {% csrf_token %}
+    {% block form %}
+        {% endblock %}
+    </form>
+    </div>
+        </div>
+    </div>
+
+{% endblock %}

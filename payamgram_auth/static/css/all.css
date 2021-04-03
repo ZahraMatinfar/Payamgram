@@ -1,0 +1,68 @@
+.flex {
+    display: flex;
+}
+
+body {
+    background-color: #ebebeb59;
+}
+
+.main-container {
+    padding-top: 3rem;
+}
+
+.link {
+    color: black;
+    text-decoration: none;
+}
+
+.link:hover {
+    color: black;
+    text-decoration: none;
+}
+
+.m-r-20 {
+    margin-right: 20px;
+}
+
+.m-r-10 {
+    margin-right: 10px;
+}
+
+.m-l-20 {
+    margin-left: 20px;
+}
+
+.m-d-20 {
+    margin-bottom: 20px;
+}
+
+.sidebar-ul {
+    overflow-y: scroll;
+    height: 30em;
+}
+*{
+    --scrollbarBG: #CFD8DC;
+    --thumbBG: #90A4AE;
+}
+
+*::-webkit-scrollbar {
+    width: 11px;
+}
+
+*{
+    scrollbar-width: thin;
+    scrollbar-color: var(--thumbBG) var(--scrollbarBG);
+}
+
+*::-webkit-scrollbar-track {
+    background: var(--scrollbarBG);
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: var(--thumbBG);
+    border-radius: 6px;
+    border: 3px solid var(--scrollbarBG);
+}
+.abbr{
+    text-decoration: none;
+}

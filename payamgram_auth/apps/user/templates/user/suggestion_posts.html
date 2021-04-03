@@ -1,0 +1,7 @@
+<ul class="list-group  card sidebar-ul" >
+    {% for post in posts %}
+        <li class="list-group-item" >
+            <a href="{% url 'post_detail' post.slug%}" class="link"> {{ post.title }} </a>
+        </li>
+    {% endfor %}
+</ul>
