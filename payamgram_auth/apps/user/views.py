@@ -5,7 +5,6 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from ghasedak import ghasedak
-
 from apps.user.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
@@ -58,6 +57,7 @@ class Signup(CreateView):
         self.object.key = unique_key()
         self.object.is_active = False
         self.object.save()
+        Profile.objects.create(user=self.object)
         if self.request.POST.get('verifyRadios') == 'email':
             current_site = get_current_site(self.request)
             mail_subject = 'Activate your account.'
@@ -75,8 +75,6 @@ class Signup(CreateView):
             return HttpResponse('Please confirm your email address to complete the registration')
         elif self.request.POST.get('verifyRadios') == 'sms':
             return redirect('activate_sms', self.object.slug)
-        Profile.objects.create(user=self.object)
-        return HttpResponse('Please confirm your email address to complete the registration')
 
     def get_success_url(self):
         return reverse('index')
@@ -250,6 +248,7 @@ class ActivateView(View):
     """
     classView for activate user
     """
+
     def get(self, request, uidb64, token):
 
         try:
@@ -283,13 +282,14 @@ class VerifySMS(View):
     """
     classView for sending code to user's mobile
     """
+
     def get(self, request, slug):
         user = User.objects.get(slug=slug)
         totp_obj = TOTPVerification(user.key)
         generated_token = totp_obj.generate_token()
-        sms = ghasedak.Ghasedak("f94866bb4670a2a772fcd7e70d67683716ec16af0c65ce9024326f0c5e94148f")
+        sms = ghasedak.Ghasedak("80676683d3ea3adb452621ec7745a697d4265c609ce9c13c810d34f23add946a")
         sms.send(
-            {'message': f"{generated_token}", 'receptor': "09372190740",
+            {'message': f"{generated_token}", 'receptor': "09169628133",
              'linenumber': "10008566"})
         # sms.send(
         #     {'message': f"Payamgram Activation code: {generated_token}", 'receptor': f"0{user.mobile[3:]}",

@@ -1,18 +1,15 @@
 {% load static %}
 {% load user_custom_tag %}
 <nav class="navbar navbar-expand-xl navbar-light bg-light fixed-top justify-content-center">
-    {#    <a href="{% url 'index' %}" class="navbar-brand"><i class="fa fa-cube"></i><b>Payam</b>gram</a>#}
     <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbarCollapse" class="collapse navbar-collapse nav-justify-content">
-        <a href="{% url 'index' %}" class="navbar-brand"><i class="fa fa-cube"></i><b>Payam</b>gram</a>
+        <a href="{% url 'index' %}" class="navbar-brand"><img src="{% static 'images/logo.svg' %}" alt="" class="logo"><b>Payam</b>gram</a>
         <div class="navbar-nav">
             <a href="{% url 'index' %}" class="nav-item nav-link active"><i class="fa fa-home"></i>Home</a>
-{#            <a href="#" class="nav-item nav-link">About</a>#}
             <a href="#" class="nav-item nav-link">Blog</a>
-{#            <a href="#" class="nav-item nav-link">Contact</a>#}
             {% if not user.is_authenticated %}
                 <a href="#about" class="nav-item nav-link">About</a>
                 <a href="#team" class="nav-item nav-link">Team</a>
@@ -26,16 +23,11 @@
                 <form class="navbar-form form-inline">
                     <div class="input-group search-box">
                         <input type="text" id="search" class="form-control" placeholder="Search by Name">
-                        {#                        {{ user_filter.form.as_p }}#}
                         <span class="input-group-addon"><i class="material-icons">&#xE8B6;</i></span>
                     </div>
                 </form>
 
                 <div class="navbar-nav auth-user">
-                    {#                    <a href="#requestModal" class="nav-item nav-link notifications"><i class="fa fa-bell-o"></i>#}
-                    {#                        <span class="badge">{{ user.target.requests.count }}</span>#}
-                    {#                    </a>#}
-
                     <div class="nav-item dropdown">
                         <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle user-action">
                             <i class="fa fa-bell-o"></i>
@@ -110,7 +102,6 @@
             {% endfor %}
         ];
          $("#search").autocomplete({
-            {#minLength: 2,#}
             source: availableTags,
             select: function (people, ui) {
                 window.location.href = ui.item.value;

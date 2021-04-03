@@ -6,11 +6,10 @@
 {% block style %}
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">{% endblock %}
 {% block aside %}
-    <h2>Find more friends:</h2>
+    <h2><abbr title="click for a better search" style="text-decoration: none;"><a href="{% url 'search-view' %}" class="link">Find more friends:</a></abbr></h2>
     {% suggestion_users login_user %}
 {% endblock %}
 {% block main %}
-    {#    <div class="main-content">#}
     <div class="container mt-7">
         <div class="row">
             <div class="col-xl-8 m-auto order-xl-2 mb-5 mb-xl-0">
@@ -55,9 +54,7 @@
                                 </form>
                                 <a href="#" class="btn btn-sm btn-default float-left">Message</a>
                             {% endif %}
-                            {#                                <a href="#" class="btn btn-sm btn-info mr-4">Connect</a>#}
-                            {#                                <a href="#" class="btn btn-sm btn-default float-right">Message</a>#}
-                        </div>
+                            </div>
                     </div>
                     <div class="card-body pt-0 pt-md-4">
                         <div class="row">
@@ -124,7 +121,7 @@
                                     <div class="text-muted small">{{ post.age |age }}</div>
                                 </div>
                             </div>
-                            <abbr title="Click for like and comment" class="abbr">
+                            <abbr title="Click for like and comment"  style="text-decoration: none;">
                             <a href="{% url 'post_detail' post.slug %}" class="link">
                                 <p>
                                     <strong>{{ post.title }}</strong><br>
@@ -149,7 +146,6 @@
             </div>
         </div>
     </div>
-    {#    </div>#}
 
     <div id="followings" class="modal fade">
         <div class="modal-dialog modal-confirm">

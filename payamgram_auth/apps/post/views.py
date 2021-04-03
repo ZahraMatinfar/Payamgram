@@ -44,6 +44,7 @@ class PostDetail(View):
     """
     classView for detail of post
     """
+
     def get(self, request, slug):
         form = CommentForm()
         post_obj = Post.objects.get(slug=slug)
@@ -107,6 +108,7 @@ class DeleteComment(View):
     """
     classView for deleting comment
     """
+
     @staticmethod
     def get(request, pk):
         comment = Comment.objects.get(id=pk)
@@ -115,10 +117,50 @@ class DeleteComment(View):
         return redirect('post_detail', post_slug)
 
 
+class EditPost(LoginRequiredMixin, UpdateView):
+    model = Post
+    template_name = 'post/post_update.html'
+    form_class = PostUpdateForm
+
+    def form_valid(self, form):
+        if form.cleaned_data['caption'] == '' and form.cleaned_data['image'] is None:
+            message = 'post should contain text or an image!!'
+            return render(self.request, 'post/post_update.html', {'message': message, 'form': form})
+        else:
+            form.instance.user = self.request.user
+            return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('post_detail', kwargs={
+            'slug': self.object.slug,
+        })
+
+    def post(self, request, *args, **kwargs):
+        """
+        for removing unuseful image in media folder ,post function has been overridden.
+         old_image: image of post before running of post func
+         clear:value of clear check box
+         new_image: image of post after editing
+        :return: functions of form
+        """
+        clear = self.request.POST.get('image-clear')
+        object = self.get_object()
+        old_image = object.image
+        if clear == 'on':
+            os.remove(object.image.path)
+        form = self.get_form()
+        if form.is_valid():
+            new_image = form.cleaned_data['image']
+            if old_image and old_image != new_image and clear != 'on':
+                os.remove(old_image.path)
+        return super().post(request, *args, **kwargs)
+
+
 class DeletePost(View):
     """
     classView for deleting a post
     """
+
     @staticmethod
     def get(request, slug):
         post = Post.objects.get(slug=slug)
@@ -131,6 +173,7 @@ class LikePost(View):
     """
     classView for liking each post, It checks if user has liked before or not
     """
+
     def get(self, request, slug):
         post_obj = Post.objects.get(slug=slug)
         likes = post_obj.likes.all()

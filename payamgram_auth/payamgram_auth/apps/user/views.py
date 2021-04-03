@@ -16,7 +16,7 @@ from apps.user.models import UserFollowing
 class Singing(View):
     def get(self, request):
         form = RegisterForm()
-        return render(request, 'user/signing.html', {'form': form})
+        return render(request, 'user/signup.html', {'form': form})
 
     def post(self, request):
         form = RegisterForm(request.POST)
@@ -28,13 +28,13 @@ class Singing(View):
             # Request.objects.create(user=user)
             login(request, user)
             return redirect('index')
-        return render(request, 'user/signing.html', {'form': form})
+        return render(request, 'user/signup.html', {'form': form})
 
 
 # class Singing(CreateView):
 #     model = User
 #     form_class = RegisterForm
-#     template_name = 'user/signing.html'
+#     template_name = 'user/signup.html'
 #     success_url = redirect('login')
 #
 #     def form_valid(self, form):

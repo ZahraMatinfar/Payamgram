@@ -7,10 +7,6 @@
   border-radius: 40px;
   margin: 10px;
 }
-/*.nav-justify-content{*/
-/*	display: flex;*/
-/*	justify-content: center;*/
-/*}*/
 .avatar-request{
 	height: 40px;
 	width: 39px;
@@ -229,8 +225,8 @@
 	.auth-user{
 		margin-left: 0;
 	}
-	/*.nav-justify-content{*/
-	/*	display: flex;*/
-	/*	justify-content: end;*/
-	/*}*/
+}
+.logo{
+	width: 40px;
+	height: 35px;
 }

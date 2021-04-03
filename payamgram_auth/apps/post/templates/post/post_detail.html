@@ -62,11 +62,6 @@
                                 {% csrf_token %}
                                 {{ form.context }}
                             </form>
-                            {#                            <form method="post">#}
-                            {#                                {% csrf_token %}#}
-                            {##}
-                            {#                                <input type="submit" value="like" name="like">#}
-                            {#                            </form>#}
                             <a href="{% url 'like_post' object.slug %}" class="link m-l-20"
                                onclick="GoBackWithRefresh();" >
                              {% static 'images/like.svg' as like%}

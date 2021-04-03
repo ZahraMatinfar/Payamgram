@@ -1,13 +1,13 @@
+import os
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django_extensions.db.fields import AutoSlugField
 from django.utils.translation import ugettext_lazy as _
 from django.core.mail import send_mail
-from apps.user.manager import UserManager
+from apps.user.managers import UserManager
 from apps.user.validators import UnicodeUsernameValidator, mobile_validator, mobile_len_validator
-from socialnetwork import settings
-import os
+from payamgram_auth import settings
 
 
 def get_upload_path(instance, filename):
