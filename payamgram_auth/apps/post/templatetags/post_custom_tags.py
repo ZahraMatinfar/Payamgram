@@ -14,19 +14,6 @@ def age_filter(age):
     day = age.days
     hour = (age.seconds // 60) // 60
 
-    # if year:
-    #     return f'{year} سال پیش  '
-    # else:
-    #     if month:
-    #         return f'{month} ماه پیش  '
-    #     else:
-    #         if day:
-    #             return f'{day}  روز پیش '
-    #         else:
-    #             if hour:
-    #                 return f'{hour} ساعت پیش '
-    #             else:
-    #                 return 'کمی پیش'
     if year == 1:
         return f'{year} year ago'
     elif year > 1:

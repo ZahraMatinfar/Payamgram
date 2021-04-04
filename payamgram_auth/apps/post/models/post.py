@@ -13,6 +13,9 @@ def get_upload_path(instance, filename):
 
 
 class Post(models.Model):
+    """
+    Each post is sent by someone which can have text or a photo or both and is known by its title.
+    """
     title = models.CharField(max_length=50)
     caption = models.TextField(blank=True)
     published_date = models.DateTimeField(editable=False, auto_now_add=True)
@@ -32,10 +35,9 @@ class Post(models.Model):
         return timezone.now() - self.published_date
 
     class Meta:
-        ordering = ['published_date__year', 'published_date__day', 'published_date__hour',
-                    'published_date__minute', 'published_date__second']
+        ordering = ['published_date__year', 'published_date__day', 'published_date__hour', 'published_date__minute',
+                    'published_date__second']
 
     def delete(self, using=None, keep_parents=False):
         super().delete(using, keep_parents)
-        # print(self.image.path)
         self.image.delete(False)

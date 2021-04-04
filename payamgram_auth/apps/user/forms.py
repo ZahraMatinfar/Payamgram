@@ -1,15 +1,9 @@
 import os
 
 from django import forms
+from django.contrib.auth import password_validation
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.tokens import default_token_generator
-from django.contrib.sites.shortcuts import get_current_site
-from django.core.validators import RegexValidator
-from django.urls import reverse
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import gettext_lazy as _
-from ghasedak import ghasedak
 
 from apps.user.models import Profile
 from apps.user.models import User
@@ -19,6 +13,18 @@ class RegisterForm(UserCreationForm):
     """
     A form for signing up.
     """
+    password1 = forms.CharField(
+        label=_("Password"),
+        strip=False,
+        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'placeholder': 'Password'}),
+        help_text=password_validation.password_validators_help_text_html(),
+    )
+    password2 = forms.CharField(
+        label=_("Password confirmation"),
+        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'placeholder': 'Confirm Password'}),
+        strip=False,
+        help_text=_("Enter the same password as before, for verification."),
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -34,7 +40,8 @@ class RegisterForm(UserCreationForm):
             'last_name': forms.TextInput(attrs={'placeholder': 'Last Name'}),
             'email': forms.TextInput(attrs={'placeholder': 'Email'}),
             'username': forms.TextInput(attrs={'placeholder': 'Username'}),
-            'mobile': forms.TextInput(attrs={'placeholder': 'Mobile like +9891111111111'})
+            'mobile': forms.TextInput(attrs={'placeholder': 'Mobile like +9891111111111'}),
+            'password1': forms.TextInput(attrs={'placeholder': 'Mobile like +9891111111111', 'type': 'password'})
         }
 
 
@@ -103,46 +110,6 @@ class UserForm(forms.ModelForm):
             'last_name': forms.TextInput(attrs={'placeholder': 'Last Name'}),
             'email': forms.TextInput(attrs={'placeholder': 'Email'}),
             'username': forms.TextInput(attrs={'placeholder': 'Username'}),
-            'mobile': forms.TextInput(attrs={'placeholder': 'Mobile like +9891111111111'})
+            'mobile': forms.TextInput(attrs={'placeholder': 'Mobile like +9891111111111'}),
+            'password1': forms.TextInput(attrs={'placeholder': 'Mobile like +9891111111111', 'type': 'password'})
         }
-
-
-class PasswordResetForm(forms.Form):
-    """
-    A form for reset password
-    """
-    phone_number = forms.CharField(label=_('mobile'), max_length=11,
-                                   validators=[RegexValidator(regex=r'+98(\d{9})$')])
-
-    def send_sms(self, reset_link):
-        sms = ghasedak.Ghasedak("f94866bb4670a2a772fcd7e70d67683716ec16af0c65ce9024326f0c5e94148f")
-        sms.send(
-            {'message': f"{reset_link}", 'receptor': "09372190740",
-             'linenumber': "10008566"})
-
-    def get_users(self, phone_number):
-        return User.objects.get(phone_number=phone_number)
-
-    def save(self, domain_override=None,
-             use_https=False, token_generator=default_token_generator,
-             request=None):
-        """
-        Generate a one-use only link for resetting password and send it to the
-        user.
-        """
-        phone_number = self.cleaned_data["phone_number"]
-        if not domain_override:
-            current_site = get_current_site(request)
-            site_name = current_site.name
-            domain = current_site.domain
-        else:
-            site_name = domain = domain_override
-        user = self.get_users(phone_number)
-        user_phone_number = user.phone_number
-        protocol = 'https' if use_https else 'http'
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-        token = token_generator.make_token(user)
-        reset_link = protocol + '://' + domain + reverse('password_reset_confirm',
-                                                         args=[uid, token])
-        print(reset_link)
-        self.send_sms(user_phone_number, reset_link)

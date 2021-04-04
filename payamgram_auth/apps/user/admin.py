@@ -17,8 +17,3 @@ class ProfileAdmin(admin.ModelAdmin):
 @admin.register(UserFollowing)
 class UserFollow(admin.ModelAdmin):
     list_display = ['id', 'user', 'following_user']
-
-
-# @admin.register(Profile)
-# class ProfileAdmin(admin.ModelAdmin):
-#     list_display = ['user']

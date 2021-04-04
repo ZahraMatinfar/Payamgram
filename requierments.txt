@@ -5,7 +5,6 @@ Django==3.1.4
 django-extensions==3.1.1
 django-filter==2.4.0
 django-otp==1.0.2
-gettext-windows==1.0
 ghasedak==0.1.7
 idna==2.10
 Pillow==8.1.0

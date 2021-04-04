@@ -32,6 +32,10 @@ class CommentForm(forms.ModelForm):
 
 
 class PostUpdateForm(forms.ModelForm):
+    """
+        A form for updating post
+    """
+
     class Meta:
         model = Post
         fields = ('title', 'caption', 'image')

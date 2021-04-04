@@ -3,7 +3,7 @@ from django.urls import path, include, re_path
 
 from apps.user.views import Signup, Login, Logout, ProfileView, FindUser, ConfirmRequestView, DeleteRequestView, \
     EditUserProfileView, change_password, ActivateView, \
-    autocomplete, VerifySMS, PasswordResetView, EditUser
+    autocomplete, VerifySMS, EditUser
 
 urlpatterns = [path('signing/', Signup.as_view(), name='signing'),
                path('activate/<uidb64>/<token>/', ActivateView.as_view(), name='activate'),  # ??
@@ -26,7 +26,6 @@ urlpatterns = [path('signing/', Signup.as_view(), name='signing'),
                path('find/', FindUser.as_view(), name='find_user'),
                path('search/', autocomplete, name='search-view'),
                path('password_reset/', views.PasswordResetView.as_view(), name='password_reset'),
-               path('password_reset/mobile', PasswordResetView.as_view(), name='password_reset_mobile'),
                path('password_reset/done/', views.PasswordResetDoneView.as_view(), name='password_reset_done'),
                path('reset/<uidb64>/<token>/', views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
                path('reset/done/', views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),

@@ -4,6 +4,9 @@ from payamgram_auth import settings
 
 
 class Comment(models.Model):
+    """
+    Each text is sent by one person to a post.
+    """
     context = models.CharField(max_length=200, blank=True)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

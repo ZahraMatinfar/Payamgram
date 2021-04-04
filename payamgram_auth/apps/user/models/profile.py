@@ -18,6 +18,9 @@ def get_upload_path(instance, filename):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    """
+    a custom user model for authentication
+    """
     first_name = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
     email = models.EmailField("email address", unique=True)
@@ -79,6 +82,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Profile(models.Model):
+    """
+    a model for less valuable information of user .
+    requests field is contains other user that send request for current object of this model.
+    """
     GENDERS = [('M', 'Male'), ('F', 'Female')]
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='target',
                                 primary_key=True)
