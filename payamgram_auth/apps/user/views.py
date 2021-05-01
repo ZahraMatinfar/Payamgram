@@ -285,9 +285,9 @@ class VerifySMS(View):
         user = User.objects.get(slug=slug)
         totp_obj = TOTPVerification(user.key)
         generated_token = totp_obj.generate_token()
-        sms = ghasedak.Ghasedak("80676683d3ea3adb452621ec7745a697d4265c609ce9c13c810d34f23add946a")
+        sms = ghasedak.Ghasedak("Your_API_code_is_given_by_Ghasedak")
         sms.send(
-            {'message': f"{generated_token}", 'receptor': "09169628133",
+            {'message': f"{generated_token}", 'receptor': "user's mobile",
              'linenumber': "10008566"})
         # sms.send(
         #     {'message': f"Payamgram Activation code: {generated_token}", 'receptor': f"0{user.mobile[3:]}",
